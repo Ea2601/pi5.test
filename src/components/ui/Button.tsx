@@ -20,7 +20,6 @@ const buttonStyles = {
     relative overflow-hidden rounded-2xl font-medium transition-all duration-300 
     focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-2 focus:ring-offset-gray-900
     flex items-center justify-center cursor-pointer touch-target
-    white-space: nowrap text-overflow: ellipsis
     disabled:opacity-50 disabled:cursor-not-allowed
   `,
   variants: {
@@ -85,13 +84,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         }}
         {...props}
       >
-        <div className="relative z-10 flex items-center justify-center gap-2 whitespace-nowrap overflow-hidden">
+        <div className="relative z-10 flex items-center justify-center gap-2 whitespace-nowrap">
           {isLoading ? (
             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
           ) : (
             <>
               {Icon && iconPosition === 'left' && <Icon className="w-4 h-4 flex-shrink-0" />}
-              {children && <span className="truncate">{children}</span>}
+              {children && <span>{children}</span>}
               {Icon && iconPosition === 'right' && <Icon className="w-4 h-4 flex-shrink-0" />}
             </>
           )}

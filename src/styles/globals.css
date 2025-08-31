@@ -114,9 +114,6 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
   
   /* Ensure button content containers also prevent wrapping */
@@ -127,8 +124,6 @@
   .btn > *,
   .button > * {
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 }
 
