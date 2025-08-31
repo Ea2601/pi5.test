@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Pi5 Süpernode - Premium ağ yönetimi konsolu. Raspberry Pi 5 için profesyonel ağ izleme, VPN yönetimi ve cihaz kontrolü." />
+    <meta name="keywords" content="raspberry pi, network management, vpn, monitoring, enterprise, iot, wireguard, pi-hole" />
+    <title>Pi5 Süpernode | Ağ Yönetimi Konsolu</title>
+    
+    <!-- PWA Meta -->
+    <meta name="theme-color" content="#00A36C" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Pi5 Süpernode" />
+    
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Security headers -->
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Pi5 Süpernode - Enterprise Network Management" />
+    <meta property="og:description" content="Professional network management platform for Raspberry Pi 5" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="tr_TR" />
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Pi5 Supernode",
+      "applicationCategory": "NetworkManagement",
+      "operatingSystem": "Linux, Raspberry Pi OS",
+      "description": "Enterprise-grade network management platform for Raspberry Pi 5",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+    
+    <!-- Performance hints -->
+    <link rel="dns-prefetch" href="//api.github.com" />
+    <link rel="preload" href="/src/main.tsx" as="script" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(registration => console.log('SW registered:', registration))
+            .catch(error => console.log('SW registration failed:', error));
+        });
+      }
+    </script>
+  </body>
+</html>

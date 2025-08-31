@@ -1,0 +1,32 @@
+{
+  "name": "pi5-supernode-backend",
+  "version": "2.1.4",
+  "description": "Pi5 Supernode Backend Services",
+  "main": "dist/api-gateway/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:gateway\" \"npm run dev:network\" \"npm run dev:vpn\" \"npm run dev:automation\"",
+    "dev:gateway": "cd api-gateway && npm run dev",
+    "dev:network": "cd network-service && npm run dev",
+    "dev:vpn": "cd vpn-service && npm run dev", 
+    "dev:automation": "cd automation-service && npm run dev",
+    "build": "npm run build:gateway && npm run build:network && npm run build:vpn && npm run build:automation",
+    "build:gateway": "cd api-gateway && npm run build",
+    "build:network": "cd network-service && npm run build",
+    "build:vpn": "cd vpn-service && npm run build",
+    "build:automation": "cd automation-service && npm run build",
+    "start": "npm run start:gateway",
+    "start:gateway": "cd api-gateway && npm start",
+    "migrate": "cd api-gateway && npm run migrate",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "keywords": ["network", "management", "vpn", "automation"],
+  "author": "Pi5 Supernode Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "concurrently": "^8.2.2",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2"
+  }
+}

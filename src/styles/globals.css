@@ -1,0 +1,190 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design System Variables */
+:root {
+  /* Base colors */
+  --color-black-base: #000000;
+  --color-white-base: #ffffff;
+  
+  /* Glassmorphism backgrounds */
+  --glass-bg-primary: rgba(0, 0, 0, 0.2);
+  --glass-bg-secondary: rgba(0, 0, 0, 0.1);
+  --glass-bg-tertiary: rgba(0, 0, 0, 0.05);
+  
+  /* Border colors */
+  --glass-border-primary: rgba(255, 255, 255, 0.1);
+  --glass-border-secondary: rgba(255, 255, 255, 0.05);
+  
+  /* Neon accent colors */
+  --neon-emerald: #00A36C;
+  --neon-emerald-light: #00C981;
+  --neon-emerald-dark: #0b7e5d;
+  
+  --neon-gold: #FFD700;
+  --neon-gold-light: #FFF700;
+  --neon-gold-dark: #B8A700;
+  
+  --neon-blue: #00D4FF;
+  --neon-purple: #A855F7;
+  --neon-orange: #F59E0B;
+  --neon-red: #EF4444;
+  
+  /* Status colors */
+  --status-success: var(--neon-emerald);
+  --status-warning: var(--neon-orange);
+  --status-error: var(--neon-red);
+  --status-info: var(--neon-blue);
+  
+  /* Shadows */
+  --shadow-glow-emerald: 0 0 20px rgba(0, 163, 108, 0.3);
+  --shadow-glow-gold: 0 0 20px rgba(255, 215, 0, 0.3);
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3);
+  
+  /* Typography */
+  --font-heading: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+  
+  /* Spacing system (8px base) */
+  --space-1: 0.25rem;  /* 4px */
+  --space-2: 0.5rem;   /* 8px */
+  --space-3: 0.75rem;  /* 12px */
+  --space-4: 1rem;     /* 16px */
+  --space-6: 1.5rem;   /* 24px */
+  --space-8: 2rem;     /* 32px */
+  --space-12: 3rem;    /* 48px */
+  --space-16: 4rem;    /* 64px */
+}
+
+/* Base layer enhancements */
+@layer base {
+  * {
+    border-color: var(--glass-border-primary);
+  }
+  
+  html {
+    font-family: var(--font-body);
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    background: linear-gradient(135deg, #1a1a1a 0%, #0f2027 50%, #203a43 100%);
+    color: white;
+    line-height: 1.6;
+  }
+}
+
+/* Component layer utilities */
+@layer components {
+  .neon-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .neon-hover:hover {
+    box-shadow: var(--shadow-glow-emerald);
+    border-color: rgba(0, 163, 108, 0.5);
+  }
+  
+  .glass-panel {
+    background: var(--glass-bg-primary);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border-primary);
+  }
+  
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .focus-visible {
+    outline: 2px solid var(--neon-emerald);
+    outline-offset: 2px;
+  }
+  
+  /* Global button text styling - prevent text wrapping */
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  [role="button"],
+  .btn,
+  .button {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Ensure button content containers also prevent wrapping */
+  button > *,
+  input[type="button"] > *,
+  input[type="submit"] > *,
+  [role="button"] > *,
+  .btn > *,
+  .button > * {
+    white-space: nowrap;
+  }
+}
+
+/* Utility layer enhancements */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .animation-reduced {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 163, 108, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 163, 108, 0.5);
+}
+
+/* Custom slider styling */
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--neon-emerald);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0, 163, 108, 0.5);
+}
+
+.slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: var(--neon-emerald);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0, 163, 108, 0.5);
+}
