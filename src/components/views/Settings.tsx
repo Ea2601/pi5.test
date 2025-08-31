@@ -223,15 +223,15 @@ const Settings: React.FC = () => {
 
                 <Card title="Güvenlik Ayarları">
                   <div className="space-y-4">
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button variant="outline" className="w-full justify-start whitespace-nowrap">
                       <Icons.Key className="w-4 h-4 mr-2" />
                       API Anahtarlarını Yenile
                     </Button>
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button variant="outline" className="w-full justify-start whitespace-nowrap">
                       <Icons.Shield className="w-4 h-4 mr-2" />
                       Güvenlik Taraması
                     </Button>
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button variant="outline" className="w-full justify-start whitespace-nowrap">
                       <Icons.FileText className="w-4 h-4 mr-2" />
                       Denetim Günlükleri
                     </Button>

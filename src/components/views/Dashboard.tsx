@@ -310,19 +310,19 @@ const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <Card title="Hızlı İşlemler" className="lg:col-span-1">
           <div className="space-y-3">
-            <Button className="w-full h-12">
+            <Button className="w-full h-12 whitespace-nowrap">
               <Icons.Search className="w-4 h-4" />
               Cihaz Keşfi
             </Button>
-            <Button variant="outline" className="w-full h-12">
+            <Button variant="outline" className="w-full h-12 whitespace-nowrap">
               <Icons.Scan className="w-4 h-4" />
               Ağ Taraması
             </Button>
-            <Button variant="outline" className="w-full h-12">
+            <Button variant="outline" className="w-full h-12 whitespace-nowrap">
               <Icons.BarChart3 className="w-4 h-4" />
               Kullanım Raporu
             </Button>
-            <Button variant="outline" className="w-full h-12">
+            <Button variant="outline" className="w-full h-12 whitespace-nowrap">
               <Icons.UserX className="w-4 h-4" />
               Cihaz Engelle
             </Button>

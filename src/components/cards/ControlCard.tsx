@@ -112,6 +112,7 @@ export const ControlCard: React.FC<ControlCardProps> = ({
                     <Button
                       size="sm"
                       onClick={() => control.action?.(control.value)}
+                      className="whitespace-nowrap"
                     >
                       {control.label || 'Tıkla'}
                     </Button>
