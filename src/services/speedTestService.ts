@@ -328,7 +328,17 @@ class SpeedTestService {
         method: 'GET',
         url: `/api/v1/network/speed-test/stats?range=${timeRange}`
       });
-      return response.data;
+      return response.data || {
+        total_tests: 0,
+        successful_tests: 0,
+        failed_tests: 0,
+        avg_download_mbps: 0,
+        avg_upload_mbps: 0,
+        avg_ping_ms: 0,
+        last_test_date: undefined,
+        popular_servers: [],
+        performance_trends: []
+      };
     } catch (error) {
       console.error('Error fetching speed test stats:', error);
       return {
