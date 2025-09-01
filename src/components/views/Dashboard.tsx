@@ -78,7 +78,14 @@ const Dashboard: React.FC = () => {
       render: (value: any, row: any) => (
         <div className="flex items-center gap-3 py-2">
           <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
-            <Icons.Smartphone className="w-4 h-4 text-emerald-400" />
+            <svg xmlns="http://www.w3.org/2000/svg" 
+                 width="24" height="24" viewBox="0 0 24 24" 
+                 fill="none" stroke="currentColor" strokeWidth="2" 
+                 strokeLinecap="round" strokeLinejoin="round" 
+                 className="lucide lucide-smartphone w-4 h-4 text-emerald-400">
+              <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/>
+              <path d="M12 18h.01"/>
+            </svg>
           </div>
           <div className="min-w-0">
             <p className="text-white font-medium text-sm leading-tight truncate">{row.name}</p>
@@ -143,21 +150,47 @@ const Dashboard: React.FC = () => {
             title="Düzenle"
             aria-label="Cihazı düzenle"
           >
-            <Icons.Edit className="w-3.5 h-3.5 text-blue-400" />
+            <svg xmlns="http://www.w3.org/2000/svg" 
+                 width="24" height="24" viewBox="0 0 24 24" 
+                 fill="none" stroke="currentColor" strokeWidth="2" 
+                 strokeLinecap="round" strokeLinejoin="round" 
+                 className="lucide lucide-edit w-3.5 h-3.5 text-blue-400">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/>
+            </svg>
           </button>
           <button 
             className="w-8 h-8 rounded-lg bg-orange-500/20 border border-orange-500/30 flex items-center justify-center hover:bg-orange-500/30 transition-all duration-200 touch-target"
             title="Engelle"
             aria-label="Cihazı engelle"
           >
-            <Icons.UserX className="w-3.5 h-3.5 text-orange-400" />
+            <svg xmlns="http://www.w3.org/2000/svg" 
+                 width="24" height="24" viewBox="0 0 24 24" 
+                 fill="none" stroke="currentColor" strokeWidth="2" 
+                 strokeLinecap="round" strokeLinejoin="round" 
+                 className="lucide lucide-user-x w-3.5 h-3.5 text-orange-400">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <line x1="17" x2="22" y1="8" y2="13"/>
+              <line x1="22" x2="17" y1="8" y2="13"/>
+            </svg>
           </button>
           <button 
             className="w-8 h-8 rounded-lg bg-red-500/20 border border-red-500/30 flex items-center justify-center hover:bg-red-500/30 transition-all duration-200 touch-target"
             title="Kaldır"
             aria-label="Cihazı kaldır"
           >
-            <Icons.Trash2 className="w-3.5 h-3.5 text-red-400" />
+            <svg xmlns="http://www.w3.org/2000/svg" 
+                 width="24" height="24" viewBox="0 0 24 24" 
+                 fill="none" stroke="currentColor" strokeWidth="2" 
+                 strokeLinecap="round" strokeLinejoin="round" 
+                 className="lucide lucide-trash-2 w-3.5 h-3.5 text-red-400">
+              <path d="M3 6h18"/>
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+              <line x1="10" x2="10" y1="11" y2="17"/>
+              <line x1="14" x2="14" y1="11" y2="17"/>
+            </svg>
           </button>
         </div>
       )
@@ -197,12 +230,32 @@ const Dashboard: React.FC = () => {
         </div>
         <div className="flex items-center gap-3">
           <Button variant="outline" size="sm">
-            <Icons.RefreshCw className="w-4 h-4 mr-2" />
-            Yenile
+            <div className="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" 
+                   width="24" height="24" viewBox="0 0 24 24" 
+                   fill="none" stroke="currentColor" strokeWidth="2" 
+                   strokeLinecap="round" strokeLinejoin="round" 
+                   className="lucide lucide-refresh-cw w-4 h-4 mr-2">
+                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                <path d="M21 3v5h-5"/>
+                <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                <path d="M8 16H3v5"/>
+              </svg>
+              <span className="truncate">Yenile</span>
+            </div>
           </Button>
           <Button size="sm">
-            <Icons.Search className="w-4 h-4 mr-2" />
-            Cihaz Keşfi
+            <div className="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" 
+                   width="24" height="24" viewBox="0 0 24 24" 
+                   fill="none" stroke="currentColor" strokeWidth="2" 
+                   strokeLinecap="round" strokeLinejoin="round" 
+                   className="lucide lucide-search w-4 h-4 mr-2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
+              </svg>
+              <span className="truncate">Cihaz Keşfi</span>
+            </div>
           </Button>
         </div>
       </div>
@@ -311,20 +364,62 @@ const Dashboard: React.FC = () => {
         <Card title="Hızlı İşlemler" className="lg:col-span-1">
           <div className="space-y-3">
             <Button className="w-full h-12">
-              <Icons.Search className="w-4 h-4" />
-              Cihaz Tara
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                     width="24" height="24" viewBox="0 0 24 24" 
+                     fill="none" stroke="currentColor" strokeWidth="2" 
+                     strokeLinecap="round" strokeLinejoin="round" 
+                     className="lucide lucide-search w-4 h-4 mr-2">
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="m21 21-4.35-4.35"/>
+                </svg>
+                <span className="truncate">Cihaz Tara</span>
+              </div>
             </Button>
             <Button variant="outline" className="w-full h-12">
-              <Icons.Scan className="w-4 h-4" />
-              Ağ Keşfi
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                     width="24" height="24" viewBox="0 0 24 24" 
+                     fill="none" stroke="currentColor" strokeWidth="2" 
+                     strokeLinecap="round" strokeLinejoin="round" 
+                     className="lucide lucide-scan w-4 h-4 mr-2">
+                  <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
+                  <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+                  <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
+                  <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+                </svg>
+                <span className="truncate">Ağ Keşfi</span>
+              </div>
             </Button>
             <Button variant="outline" className="w-full h-12">
-              <Icons.BarChart3 className="w-4 h-4" />
-              Rapor
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                     width="24" height="24" viewBox="0 0 24 24" 
+                     fill="none" stroke="currentColor" strokeWidth="2" 
+                     strokeLinecap="round" strokeLinejoin="round" 
+                     className="lucide lucide-bar-chart-3 w-4 h-4 mr-2">
+                  <path d="M3 3v18h18"/>
+                  <path d="M18 17V9"/>
+                  <path d="M13 17V5"/>
+                  <path d="M8 17v-3"/>
+                </svg>
+                <span className="truncate">Rapor</span>
+              </div>
             </Button>
             <Button variant="outline" className="w-full h-12">
-              <Icons.UserX className="w-4 h-4" />
-              Engelle
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                     width="24" height="24" viewBox="0 0 24 24" 
+                     fill="none" stroke="currentColor" strokeWidth="2" 
+                     strokeLinecap="round" strokeLinejoin="round" 
+                     className="lucide lucide-user-x w-4 h-4 mr-2">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <line x1="17" x2="22" y1="8" y2="13"/>
+                  <line x1="22" x2="17" y1="8" y2="13"/>
+                </svg>
+                <span className="truncate">Engelle</span>
+              </div>
             </Button>
           </div>
         </Card>
@@ -341,14 +436,29 @@ const Dashboard: React.FC = () => {
             </div>
             <div className="flex items-center justify-between p-3 rounded-xl bg-white/5">
               <div className="flex items-center gap-2">
-                <Icons.Users className="w-4 h-4 text-blue-400" />
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                     width="24" height="24" viewBox="0 0 24 24" 
+                     fill="none" stroke="currentColor" strokeWidth="2" 
+                     strokeLinecap="round" strokeLinejoin="round" 
+                     className="lucide lucide-users w-4 h-4 text-blue-400">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
                 <span className="text-white text-sm">Aktif İstemciler</span>
               </div>
               <span className="text-white font-medium">8 / 12</span>
             </div>
             <div className="flex items-center justify-between p-3 rounded-xl bg-white/5">
               <div className="flex items-center gap-2">
-                <Icons.Shield className="w-4 h-4 text-purple-400" />
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                     width="24" height="24" viewBox="0 0 24 24" 
+                     fill="none" stroke="currentColor" strokeWidth="2" 
+                     strokeLinecap="round" strokeLinejoin="round" 
+                     className="lucide lucide-shield w-4 h-4 text-purple-400">
+                  <path d="M20 13c0 5-3.5 7.5-8 7.5s-8-2.5-8-7.5c0-1.3.3-2.5.8-3.5.5-1 1.2-1.9 2.2-2.6 1-0.7 2.2-1.2 3.5-1.5 1.3-0.3 2.7-0.3 4 0 1.3 0.3 2.5 0.8 3.5 1.5 1 0.7 1.7 1.6 2.2 2.6.5 1 .8 2.2.8 3.5z"/>
+                </svg>
                 <span className="text-white text-sm">Tünel Durumu</span>
               </div>
               <span className="text-emerald-400 font-medium text-sm">Sağlıklı</span>
@@ -361,7 +471,16 @@ const Dashboard: React.FC = () => {
           <div className="space-y-3">
             <div className="flex items-center justify-between p-3 rounded-xl bg-white/5">
               <div className="flex items-center gap-3 min-w-0 flex-1">
-                <Icons.HardDrive className="w-4 h-4 text-white/70 flex-shrink-0" />
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                     width="24" height="24" viewBox="0 0 24 24" 
+                     fill="none" stroke="currentColor" strokeWidth="2" 
+                     strokeLinecap="round" strokeLinejoin="round" 
+                     className="lucide lucide-hard-drive w-4 h-4 text-white/70 flex-shrink-0">
+                  <line x1="22" x2="2" y1="12" y2="12"/>
+                  <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
+                  <line x1="6" x2="6.01" y1="16" y2="16"/>
+                  <line x1="10" x2="10.01" y1="16" y2="16"/>
+                </svg>
                 <div className="min-w-0 flex-1">
                   <p className="text-white text-sm font-medium">/dev/sda1 (Sistem)</p>
                   <p className="text-white/60 text-xs">847 GB / 1.2 TB kullanılan</p>
@@ -376,7 +495,15 @@ const Dashboard: React.FC = () => {
             </div>
             <div className="flex items-center justify-between p-3 rounded-xl bg-white/5">
               <div className="flex items-center gap-3 min-w-0 flex-1">
-                <Icons.Database className="w-4 h-4 text-white/70 flex-shrink-0" />
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                     width="24" height="24" viewBox="0 0 24 24" 
+                     fill="none" stroke="currentColor" strokeWidth="2" 
+                     strokeLinecap="round" strokeLinejoin="round" 
+                     className="lucide lucide-database w-4 h-4 text-white/70 flex-shrink-0">
+                  <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                  <path d="M3 5v14a9 3 0 0 0 18 0V5"/>
+                  <path d="M3 12a9 3 0 0 0 18 0"/>
+                </svg>
                 <div className="min-w-0 flex-1">
                   <p className="text-white text-sm font-medium">/dev/sda2 (Veri)</p>
                   <p className="text-white/60 text-xs">234 GB / 500 GB kullanılan</p>
@@ -391,7 +518,15 @@ const Dashboard: React.FC = () => {
             </div>
             <div className="flex items-center justify-between p-3 rounded-xl bg-white/5">
               <div className="flex items-center gap-3 min-w-0 flex-1">
-                <Icons.Archive className="w-4 h-4 text-white/70 flex-shrink-0" />
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                     width="24" height="24" viewBox="0 0 24 24" 
+                     fill="none" stroke="currentColor" strokeWidth="2" 
+                     strokeLinecap="round" strokeLinejoin="round" 
+                     className="lucide lucide-archive w-4 h-4 text-white/70 flex-shrink-0">
+                  <rect width="20" height="5" x="2" y="3" rx="1"/>
+                  <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/>
+                  <path d="M10 12h4"/>
+                </svg>
                 <div className="min-w-0 flex-1">
                   <p className="text-white text-sm font-medium">/dev/sda3 (Yedek)</p>
                   <p className="text-white/60 text-xs">45 GB / 200 GB kullanılan</p>

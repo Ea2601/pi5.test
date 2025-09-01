@@ -165,8 +165,17 @@ const Settings: React.FC = () => {
                 <Card title="Anlık Görüntü Yönetimi">
                   <div className="space-y-4">
                     <Button className="w-full">
-                      <Icons.Camera className="w-4 h-4 mr-2" />
-                      Snapshot Al
+                      <div className="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" 
+                             width="24" height="24" viewBox="0 0 24 24" 
+                             fill="none" stroke="currentColor" strokeWidth="2" 
+                             strokeLinecap="round" strokeLinejoin="round" 
+                             className="lucide lucide-camera w-4 h-4 mr-2">
+                          <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+                          <circle cx="12" cy="13" r="3"/>
+                        </svg>
+                        <span className="truncate">Snapshot Al</span>
+                      </div>
                     </Button>
                     
                     <div className="space-y-2">
@@ -224,16 +233,44 @@ const Settings: React.FC = () => {
                 <Card title="Güvenlik Ayarları">
                   <div className="space-y-4">
                     <Button variant="outline" className="w-full justify-start">
-                      <Icons.Key className="w-4 h-4 mr-2" />
-                      API Yenile
+                      <div className="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" 
+                             width="24" height="24" viewBox="0 0 24 24" 
+                             fill="none" stroke="currentColor" strokeWidth="2" 
+                             strokeLinecap="round" strokeLinejoin="round" 
+                             className="lucide lucide-key w-4 h-4 mr-2">
+                          <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+                        </svg>
+                        <span className="truncate">API Yenile</span>
+                      </div>
                     </Button>
                     <Button variant="outline" className="w-full justify-start">
-                      <Icons.Shield className="w-4 h-4 mr-2" />
-                      Güvenlik Tara
+                      <div className="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" 
+                             width="24" height="24" viewBox="0 0 24 24" 
+                             fill="none" stroke="currentColor" strokeWidth="2" 
+                             strokeLinecap="round" strokeLinejoin="round" 
+                             className="lucide lucide-shield w-4 h-4 mr-2">
+                          <path d="M20 13c0 5-3.5 7.5-8 7.5s-8-2.5-8-7.5c0-1.3.3-2.5.8-3.5.5-1 1.2-1.9 2.2-2.6 1-0.7 2.2-1.2 3.5-1.5 1.3-0.3 2.7-0.3 4 0 1.3 0.3 2.5 0.8 3.5 1.5 1 0.7 1.7 1.6 2.2 2.6.5 1 .8 2.2.8 3.5z"/>
+                        </svg>
+                        <span className="truncate">Güvenlik Tara</span>
+                      </div>
                     </Button>
                     <Button variant="outline" className="w-full justify-start">
-                      <Icons.FileText className="w-4 h-4 mr-2" />
-                      Denetim Log
+                      <div className="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" 
+                             width="24" height="24" viewBox="0 0 24 24" 
+                             fill="none" stroke="currentColor" strokeWidth="2" 
+                             strokeLinecap="round" strokeLinejoin="round" 
+                             className="lucide lucide-file-text w-4 h-4 mr-2">
+                          <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>
+                          <path d="M14 2v4a2 2 0 0 0 2 2h4"/>
+                          <path d="M10 9H8"/>
+                          <path d="M16 13H8"/>
+                          <path d="M16 17H8"/>
+                        </svg>
+                        <span className="truncate">Denetim Log</span>
+                      </div>
                     </Button>
                   </div>
                 </Card>
@@ -267,18 +304,40 @@ const Settings: React.FC = () => {
                   <h4 className="text-white font-semibold">Kapsamlı Sistem Dokümantasyonu</h4>
                   <div className="bg-white/5 rounded-xl p-4 border border-white/10">
                     <div className="space-y-3">
-                      <p className="text-white/80 text-sm">
-                        Tam kurulum kılavuzu Pi5 Supernode sisteminin tüm bileşenlerini kapsar:
-                      </p>
-                      <ul className="space-y-1 text-white/70 text-sm">
+                      <Button variant="outline" className="w-full justify-start">
+                        <div className="flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" 
+                               width="24" height="24" viewBox="0 0 24 24" 
+                               fill="none" stroke="currentColor" strokeWidth="2" 
+                               strokeLinecap="round" strokeLinejoin="round" 
+                               className="lucide lucide-file-text w-4 h-4 mr-2">
+                            <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>
+                            <path d="M14 2v4a2 2 0 0 0 2 2h4"/>
+                            <path d="M10 9H8"/>
+                            <path d="M16 13H8"/>
+                            <path d="M16 17H8"/>
+                          </svg>
+                          <span className="truncate">Tam Kurulum Kılavuzunu Aç</span>
+                        </div>
+                      </Button>
                         <li>• <strong>Sistem Analizi:</strong> Tüm bileşenlerin detaylı analizi</li>
                         <li>• <strong>Kurulum Prosedürleri:</strong> Adım adım kurulum talimatları</li>
                         <li>• <strong>API Entegrasyonu:</strong> Backend servis bağlantıları</li>
                         <li>• <strong>Grafana Monitoring:</strong> İzleme sistemi kurulumu</li>
-                        <li>• <strong>WireGuard VPN:</strong> VPN sistem entegrasyonu</li>
-                        <li>• <strong>Güvenlik:</strong> Sistem sıkılaştırma prosedürleri</li>
-                        <li>• <strong>Sorun Giderme:</strong> Kapsamlı hata çözümleri</li>
-                      </ul>
+                      <Button variant="outline" className="w-full justify-start">
+                        <div className="flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" 
+                               width="24" height="24" viewBox="0 0 24 24" 
+                               fill="none" stroke="currentColor" strokeWidth="2" 
+                               strokeLinecap="round" strokeLinejoin="round" 
+                               className="lucide lucide-download w-4 h-4 mr-2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7,10 12,15 17,10"/>
+                            <line x1="12" x2="12" y1="15" y2="3"/>
+                          </svg>
+                          <span className="truncate">PDF İndir</span>
+                        </div>
+                      </Button>
                     </div>
                   </div>
                   
@@ -299,20 +358,57 @@ const Settings: React.FC = () => {
               <Card title="Hızlı Erişim ve Kaynaklar">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <Button variant="outline" className="justify-start">
-                    <Icons.ExternalLink className="w-4 h-4 mr-2" />
-                    Teknik Spesifikasyonlar
+                    <div className="flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" 
+                           width="24" height="24" viewBox="0 0 24 24" 
+                           fill="none" stroke="currentColor" strokeWidth="2" 
+                           strokeLinecap="round" strokeLinejoin="round" 
+                           className="lucide lucide-external-link w-4 h-4 mr-2">
+                        <path d="M15 3h6v6"/>
+                        <path d="M10 14 21 3"/>
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                      </svg>
+                      <span className="truncate">Teknik Spesifikasyonlar</span>
+                    </div>
                   </Button>
                   <Button variant="outline" className="justify-start">
-                    <Icons.Wrench className="w-4 h-4 mr-2" />
-                    WireGuard Kurulum Kılavuzu
+                    <div className="flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" 
+                           width="24" height="24" viewBox="0 0 24 24" 
+                           fill="none" stroke="currentColor" strokeWidth="2" 
+                           strokeLinecap="round" strokeLinejoin="round" 
+                           className="lucide lucide-wrench w-4 h-4 mr-2">
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                      </svg>
+                      <span className="truncate">WireGuard Kılavuzu</span>
+                    </div>
                   </Button>
                   <Button variant="outline" className="justify-start">
-                    <Icons.Code className="w-4 h-4 mr-2" />
-                    Yeniden Yapılandırma Planı
+                    <div className="flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" 
+                           width="24" height="24" viewBox="0 0 24 24" 
+                           fill="none" stroke="currentColor" strokeWidth="2" 
+                           strokeLinecap="round" strokeLinejoin="round" 
+                           className="lucide lucide-code w-4 h-4 mr-2">
+                        <polyline points="16,18 22,12 16,6"/>
+                        <polyline points="8,6 2,12 8,18"/>
+                      </svg>
+                      <span className="truncate">Yapılandırma Planı</span>
+                    </div>
                   </Button>
                   <Button variant="outline" className="justify-start">
-                    <Icons.Layers className="w-4 h-4 mr-2" />
-                    Uygulama Kılavuzu
+                    <div className="flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" 
+                           width="24" height="24" viewBox="0 0 24 24" 
+                           fill="none" stroke="currentColor" strokeWidth="2" 
+                           strokeLinecap="round" strokeLinejoin="round" 
+                           className="lucide lucide-layers w-4 h-4 mr-2">
+                        <path d="M2 12h20l-10-5z"/>
+                        <path d="M2 17h20l-10-5z"/>
+                        <path d="M2 22h20l-10-5z"/>
+                      </svg>
+                      <span className="truncate">Uygulama Kılavuzu</span>
+                    </div>
                   </Button>
                 </div>
               </Card>

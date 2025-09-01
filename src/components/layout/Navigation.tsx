@@ -35,7 +35,22 @@ export const Navigation: React.FC = () => {
         <div className="p-4 border-b border-white/10">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
-              <Icons.Cpu className="w-4 h-4 text-emerald-400" />
+              <svg xmlns="http://www.w3.org/2000/svg" 
+                   width="24" height="24" viewBox="0 0 24 24" 
+                   fill="none" stroke="currentColor" strokeWidth="2" 
+                   strokeLinecap="round" strokeLinejoin="round" 
+                   className="lucide lucide-cpu w-4 h-4 text-emerald-400">
+                <rect width="16" height="16" x="4" y="4" rx="2"/>
+                <rect width="6" height="6" x="9" y="9" rx="1"/>
+                <path d="M15 2v2"/>
+                <path d="M15 20v2"/>
+                <path d="M2 15h2"/>
+                <path d="M2 9h2"/>
+                <path d="M20 15h2"/>
+                <path d="M20 9h2"/>
+                <path d="M9 2v2"/>
+                <path d="M9 20v2"/>
+              </svg>
             </div>
             {!isMenuCollapsed && (
               <div className="min-w-0 flex-1">
@@ -49,7 +64,15 @@ export const Navigation: React.FC = () => {
             className="absolute top-4 right-4 w-6 h-6 text-white/60 hover:text-white transition-colors touch-target"
             aria-label={isMenuCollapsed ? "Expand menu" : "Collapse menu"}
           >
-            <Icons.Menu className="w-4 h-4" />
+            <svg xmlns="http://www.w3.org/2000/svg" 
+                 width="24" height="24" viewBox="0 0 24 24" 
+                 fill="none" stroke="currentColor" strokeWidth="2" 
+                 strokeLinecap="round" strokeLinejoin="round" 
+                 className="lucide lucide-menu w-4 h-4">
+              <line x1="4" x2="20" y1="12" y2="12"/>
+              <line x1="4" x2="20" y1="6" y2="6"/>
+              <line x1="4" x2="20" y1="18" y2="18"/>
+            </svg>
           </button>
         </div>
 
@@ -127,7 +150,7 @@ export const Navigation: React.FC = () => {
             </div>
             <button
               onClick={toggleMenu}
-              className="w-8 h-8 text-white/60 hover:text-white transition-colors touch-target"
+             className="absolute top-4 right-4 w-6 h-6 flex items-center justify-center text-white/60 hover:text-white transition-colors touch-target"
               aria-label="Close menu"
             >
               <Icons.X className="w-5 h-5" />

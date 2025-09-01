@@ -38,7 +38,9 @@ export const MetricCard: React.FC<MetricCardProps> = ({
           <div className="flex items-center gap-2 mb-2">
             {IconComponent && (
               <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center", statusColors[status])}>
-                <IconComponent className="w-4 h-4" />
+                <div className="flex items-center">
+                  <IconComponent className="w-4 h-4" />
+                </div>
               </div>
             )}
             <h3 className="text-white font-medium text-sm text-balance">{title}</h3>

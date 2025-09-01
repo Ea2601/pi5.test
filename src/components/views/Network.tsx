@@ -33,8 +33,18 @@ const Network: React.FC = () => {
             <div className="space-y-4">
               <p className="text-white/70">DNS ayarları yakında eklenecek...</p>
               <Button variant="outline" className="w-full">
-                <Globe className="w-4 h-4 mr-2" />
-                DNS Yapılandırması
+                <div className="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" 
+                       width="24" height="24" viewBox="0 0 24 24" 
+                       fill="none" stroke="currentColor" strokeWidth="2" 
+                       strokeLinecap="round" strokeLinejoin="round" 
+                       className="lucide lucide-globe w-4 h-4 mr-2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+                    <path d="M2 12h20"/>
+                  </svg>
+                  <span className="truncate">DNS Yapılandırması</span>
+                </div>
               </Button>
             </div>
           </Card>
@@ -45,8 +55,20 @@ const Network: React.FC = () => {
             <div className="space-y-4">
               <p className="text-white/70">DHCP ayarları yakında eklenecek...</p>
               <Button variant="outline" className="w-full">
-                <NetworkIcon className="w-4 h-4 mr-2" />
-                DHCP Yapılandırması
+                <div className="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" 
+                       width="24" height="24" viewBox="0 0 24 24" 
+                       fill="none" stroke="currentColor" strokeWidth="2" 
+                       strokeLinecap="round" strokeLinejoin="round" 
+                       className="lucide lucide-network w-4 h-4 mr-2">
+                    <rect x="16" y="16" width="6" height="6" rx="1"/>
+                    <rect x="2" y="16" width="6" height="6" rx="1"/>
+                    <rect x="9" y="2" width="6" height="6" rx="1"/>
+                    <path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/>
+                    <path d="M12 12V8"/>
+                  </svg>
+                  <span className="truncate">DHCP Yapılandırması</span>
+                </div>
               </Button>
             </div>
           </Card>
@@ -57,8 +79,20 @@ const Network: React.FC = () => {
             <div className="space-y-4">
               <p className="text-white/70">Ağ topolojisi görünümü yakında eklenecek...</p>
               <Button variant="outline" className="w-full">
-                <NetworkIcon className="w-4 h-4 mr-2" />
-                Topoloji Görünümü
+                <div className="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" 
+                       width="24" height="24" viewBox="0 0 24 24" 
+                       fill="none" stroke="currentColor" strokeWidth="2" 
+                       strokeLinecap="round" strokeLinejoin="round" 
+                       className="lucide lucide-network w-4 h-4 mr-2">
+                    <rect x="16" y="16" width="6" height="6" rx="1"/>
+                    <rect x="2" y="16" width="6" height="6" rx="1"/>
+                    <rect x="9" y="2" width="6" height="6" rx="1"/>
+                    <path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/>
+                    <path d="M12 12V8"/>
+                  </svg>
+                  <span className="truncate">Topoloji Görünümü</span>
+                </div>
               </Button>
             </div>
           </Card>
@@ -69,8 +103,19 @@ const Network: React.FC = () => {
             <div className="space-y-4">
               <p className="text-white/70">Wi-Fi ayarları yakında eklenecek...</p>
               <Button variant="outline" className="w-full">
-                <Wifi className="w-4 h-4 mr-2" />
-                Wi-Fi Yapılandırması
+                <div className="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" 
+                       width="24" height="24" viewBox="0 0 24 24" 
+                       fill="none" stroke="currentColor" strokeWidth="2" 
+                       strokeLinecap="round" strokeLinejoin="round" 
+                       className="lucide lucide-wifi w-4 h-4 mr-2">
+                    <path d="M12 20h.01"/>
+                    <path d="M2 8.82a15 15 0 0 1 20 0"/>
+                    <path d="M5 12.859a10 10 0 0 1 14 0"/>
+                    <path d="M8.5 16.429a5 5 0 0 1 7 0"/>
+                  </svg>
+                  <span className="truncate">Wi-Fi Yapılandırması</span>
+                </div>
               </Button>
             </div>
           </Card>
@@ -83,8 +128,17 @@ const Network: React.FC = () => {
             <div className="space-y-4">
               <p className="text-white/70">Ağ ayarları yakında eklenecek...</p>
               <Button variant="outline" className="w-full">
-                <Settings className="w-4 h-4 mr-2" />
-                Genel Ayarlar
+                <div className="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" 
+                       width="24" height="24" viewBox="0 0 24 24" 
+                       fill="none" stroke="currentColor" strokeWidth="2" 
+                       strokeLinecap="round" strokeLinejoin="round" 
+                       className="lucide lucide-settings w-4 h-4 mr-2">
+                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                  <span className="truncate">Genel Ayarlar</span>
+                </div>
               </Button>
             </div>
           </Card>

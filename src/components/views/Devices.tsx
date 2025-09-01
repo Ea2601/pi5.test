@@ -119,12 +119,32 @@ const Devices: React.FC = () => {
         </div>
         <div className="flex items-center gap-3">
           <Button variant="outline" size="sm">
-            <Icons.RefreshCw className="w-4 h-4 mr-2" />
-            Yenile
+            <div className="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" 
+                   width="24" height="24" viewBox="0 0 24 24" 
+                   fill="none" stroke="currentColor" strokeWidth="2" 
+                   strokeLinecap="round" strokeLinejoin="round" 
+                   className="lucide lucide-refresh-cw w-4 h-4 mr-2">
+                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                <path d="M21 3v5h-5"/>
+                <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                <path d="M8 16H3v5"/>
+              </svg>
+              <span className="truncate">Yenile</span>
+            </div>
           </Button>
           <Button size="sm">
-            <Icons.Search className="w-4 h-4 mr-2" />
-            Cihaz Tara
+            <div className="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" 
+                   width="24" height="24" viewBox="0 0 24 24" 
+                   fill="none" stroke="currentColor" strokeWidth="2" 
+                   strokeLinecap="round" strokeLinejoin="round" 
+                   className="lucide lucide-search w-4 h-4 mr-2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
+              </svg>
+              <span className="truncate">Cihaz Tara</span>
+            </div>
           </Button>
         </div>
       </div>
@@ -180,22 +200,64 @@ const Devices: React.FC = () => {
         {/* Quick Actions */}
         <Card title="Hızlı İşlemler">
           <div className="space-y-3">
-            <Button className="w-full justify-start">
-              <Icons.Search className="w-4 h-4 mr-2" />
-              Cihaz Tara
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              <Icons.Scan className="w-4 h-4 mr-2" />
-              Ağ Keşfi
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              <Icons.BarChart3 className="w-4 h-4 mr-2" />
-              Rapor Al
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              <Icons.UserX className="w-4 h-4 mr-2" />
-              Engelle
-            </Button>
+           <Button className="w-full justify-start">
+             <div className="flex items-center">
+               <svg xmlns="http://www.w3.org/2000/svg" 
+                    width="24" height="24" viewBox="0 0 24 24" 
+                    fill="none" stroke="currentColor" strokeWidth="2" 
+                    strokeLinecap="round" strokeLinejoin="round" 
+                    className="lucide lucide-search w-4 h-4 mr-2">
+                 <circle cx="11" cy="11" r="8"/>
+                 <path d="m21 21-4.35-4.35"/>
+               </svg>
+               <span className="truncate">Cihaz Tara</span>
+             </div>
+           </Button>
+           <Button variant="outline" className="w-full justify-start">
+             <div className="flex items-center">
+               <svg xmlns="http://www.w3.org/2000/svg" 
+                    width="24" height="24" viewBox="0 0 24 24" 
+                    fill="none" stroke="currentColor" strokeWidth="2" 
+                    strokeLinecap="round" strokeLinejoin="round" 
+                    className="lucide lucide-scan w-4 h-4 mr-2">
+                 <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
+                 <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+                 <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
+                 <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+               </svg>
+               <span className="truncate">Ağ Keşfi</span>
+             </div>
+           </Button>
+           <Button variant="outline" className="w-full justify-start">
+             <div className="flex items-center">
+               <svg xmlns="http://www.w3.org/2000/svg" 
+                    width="24" height="24" viewBox="0 0 24 24" 
+                    fill="none" stroke="currentColor" strokeWidth="2" 
+                    strokeLinecap="round" strokeLinejoin="round" 
+                    className="lucide lucide-bar-chart-3 w-4 h-4 mr-2">
+                 <path d="M3 3v18h18"/>
+                 <path d="M18 17V9"/>
+                 <path d="M13 17V5"/>
+                 <path d="M8 17v-3"/>
+               </svg>
+               <span className="truncate">Rapor Al</span>
+             </div>
+           </Button>
+           <Button variant="outline" className="w-full justify-start">
+             <div className="flex items-center">
+               <svg xmlns="http://www.w3.org/2000/svg" 
+                    width="24" height="24" viewBox="0 0 24 24" 
+                    fill="none" stroke="currentColor" strokeWidth="2" 
+                    strokeLinecap="round" strokeLinejoin="round" 
+                    className="lucide lucide-user-x w-4 h-4 mr-2">
+                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                 <circle cx="9" cy="7" r="4"/>
+                 <line x1="17" x2="22" y1="8" y2="13"/>
+                 <line x1="22" x2="17" y1="8" y2="13"/>
+               </svg>
+               <span className="truncate">Engelle</span>
+             </div>
+           </Button>
           </div>
         </Card>
       </div>
