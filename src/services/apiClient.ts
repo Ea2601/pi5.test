@@ -5,8 +5,13 @@ class ApiClient {
   private token: string | null = null;
 
   constructor() {
+    // Use same protocol as frontend to avoid mixed content issues
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const baseURL = import.meta.env.VITE_API_BASE_URL || `${protocol}//${hostname}:3000`;
+    
     this.client = axios.create({
-      baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000',
+      baseURL: baseURL,
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json'
