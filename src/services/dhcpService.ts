@@ -138,7 +138,7 @@ class DHCPService {
   }
 
   // Active Leases Management
-  async getActiveLea ses(): Promise<DHCPLease[]> {
+  async getActiveLeases(): Promise<DHCPLease[]> {
     const { data, error } = await supabase
       .from('dhcp_leases')
       .select(`
