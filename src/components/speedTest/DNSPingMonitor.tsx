@@ -14,7 +14,7 @@ import {
   useStartDNSMonitor,
   useStopDNSMonitor
 } from '../../hooks/api/useSpeedTest';
-import { DNSPingMonitor } from '../../types/speedTest';
+import { DNSPingMonitor as IDNSPingMonitor } from '../../types/speedTest';
 
 interface DNSMonitorFormData {
   monitor_name: string;
@@ -44,7 +44,7 @@ const dnsPresets = [
 
 export const DNSPingMonitor: React.FC = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [editingMonitor, setEditingMonitor] = useState<DNSPingMonitor | null>(null);
+  const [editingMonitor, setEditingMonitor] = useState<IDNSPingMonitor | null>(null);
   const [selectedMonitor, setSelectedMonitor] = useState<string>('');
   const [timeRange, setTimeRange] = useState<'1h' | '6h' | '24h'>('1h');
   
@@ -109,7 +109,7 @@ export const DNSPingMonitor: React.FC = () => {
     });
   };
 
-  const handleToggleMonitor = async (monitor: DNSPingMonitor) => {
+  const handleToggleMonitor = async (monitor: IDNSPingMonitor) => {
     try {
       if (monitor.is_active) {
         await stopMonitorMutation.mutateAsync(monitor.id);
@@ -151,7 +151,7 @@ export const DNSPingMonitor: React.FC = () => {
     loss: result.packet_loss_percent || 0
   }));
 
-  const MonitorCard: React.FC<{ monitor: DNSPingMonitor }> = ({ monitor }) => {
+  const MonitorCard: React.FC<{ monitor: IDNSPingMonitor }> = ({ monitor }) => {
     return (
       <Card className="h-full">
         <div className="space-y-4">
