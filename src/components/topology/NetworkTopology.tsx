@@ -8,6 +8,7 @@ import { cn } from '../../lib/utils';
 import { NetworkTopologyMap } from './NetworkTopologyMap';
 import { VLANManagement } from './VLANManagement';
 import { TrafficFlowVisualization } from './TrafficFlowVisualization';
+import SpeedTestManagement from '../speedTest/SpeedTestManagement';
 import { 
   useTopologyStats, 
   useNetworkHealthCheck, 
@@ -31,6 +32,7 @@ const NetworkTopology: React.FC = () => {
     { id: 'topology', label: 'Topoloji Haritası', icon: 'Network' },
     { id: 'vlans', label: 'VLAN Yönetimi', icon: 'Layers' },
     { id: 'traffic', label: 'Trafik Akışı', icon: 'Zap' },
+    { id: 'speed-test', label: 'Hız Testi', icon: 'Gauge' },
     { id: 'segments', label: 'Ağ Segmentleri', icon: 'Boxes' },
     { id: 'monitoring', label: 'İzleme & Uyarılar', icon: 'Bell' }
   ];
@@ -83,6 +85,8 @@ const NetworkTopology: React.FC = () => {
         return <VLANManagement />;
       case 'traffic':
         return <TrafficFlowVisualization />;
+      case 'speed-test':
+        return <SpeedTestManagement />;
       case 'segments':
         return (
           <Card title="Ağ Segmentleri">
