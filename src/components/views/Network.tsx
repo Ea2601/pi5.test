@@ -6,6 +6,7 @@ import { Button } from '../ui/Button';
 import { cn } from '../../lib/utils';
 import { SEOMeta } from '../SEO/SEOMeta';
 import { TrafficRuleManager } from '../traffic/TrafficRuleManager';
+import DNSManagement from '../dns/DNSManagement';
 
 interface TabConfig {
   id: string;
@@ -28,27 +29,7 @@ const Network: React.FC = () => {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'dns':
-        return (
-          <Card title="DNS Yönetimi">
-            <div className="space-y-4">
-              <p className="text-white/70">DNS ayarları yakında eklenecek...</p>
-              <Button variant="outline" className="w-full">
-                <div className="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" 
-                       width="24" height="24" viewBox="0 0 24 24" 
-                       fill="none" stroke="currentColor" strokeWidth="2" 
-                       strokeLinecap="round" strokeLinejoin="round" 
-                       className="lucide lucide-globe w-4 h-4 mr-2">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
-                    <path d="M2 12h20"/>
-                  </svg>
-                  <span className="truncate">DNS Yapılandırması</span>
-                </div>
-              </Button>
-            </div>
-          </Card>
-        );
+        return <DNSManagement />;
       case 'dhcp':
         return (
           <Card title="DHCP Yönetimi">

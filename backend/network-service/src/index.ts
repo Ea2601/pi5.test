@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { logger } from './utils/logger';
 import deviceRoutes from './routes/devices';
 import trafficRoutes from './routes/traffic';
+import dnsRoutes from './routes/dns';
 import healthRoutes from './routes/health';
 
 dotenv.config();
@@ -24,6 +25,7 @@ app.use((req, res, next) => {
 app.use('/health', healthRoutes);
 app.use('/devices', deviceRoutes);
 app.use('/traffic', trafficRoutes);
+app.use('/dns', dnsRoutes);
 
 app.listen(PORT, () => {
   logger.info(`Network Service running on port ${PORT}`);
