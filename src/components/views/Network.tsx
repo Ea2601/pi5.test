@@ -8,6 +8,7 @@ import { SEOMeta } from '../SEO/SEOMeta';
 import { TrafficRuleManager } from '../traffic/TrafficRuleManager';
 import DNSManagement from '../dns/DNSManagement';
 import DHCPManagement from '../dhcp/DHCPManagement';
+import NetworkTopology from '../topology/NetworkTopology';
 
 interface TabConfig {
   id: string;
@@ -34,29 +35,7 @@ const Network: React.FC = () => {
       case 'dhcp':
         return <DHCPManagement />;
       case 'topology':
-        return (
-          <Card title="Ağ Topolojisi">
-            <div className="space-y-4">
-              <p className="text-white/70">Ağ topolojisi görünümü yakında eklenecek...</p>
-              <Button variant="outline" className="w-full">
-                <div className="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" 
-                       width="24" height="24" viewBox="0 0 24 24" 
-                       fill="none" stroke="currentColor" strokeWidth="2" 
-                       strokeLinecap="round" strokeLinejoin="round" 
-                       className="lucide lucide-network w-4 h-4 mr-2">
-                    <rect x="16" y="16" width="6" height="6" rx="1"/>
-                    <rect x="2" y="16" width="6" height="6" rx="1"/>
-                    <rect x="9" y="2" width="6" height="6" rx="1"/>
-                    <path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/>
-                    <path d="M12 12V8"/>
-                  </svg>
-                  <span className="truncate">Topoloji Görünümü</span>
-                </div>
-              </Button>
-            </div>
-          </Card>
-        );
+        return <NetworkTopology />;
       case 'wifi':
         return (
           <Card title="Wi-Fi Yönetimi">
