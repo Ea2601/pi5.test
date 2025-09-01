@@ -262,52 +262,57 @@ const Settings: React.FC = () => {
               </Card>
 
               {/* Sample Documentation */}
-              <Card title="Raspberry Pi 5 Kurulum Rehberi">
+              <Card title="Pi5 Supernode Tam Kurulum Kılavuzu">
                 <div className="space-y-4">
-                  <h4 className="text-white font-semibold">Sistem Gereksinimleri</h4>
+                  <h4 className="text-white font-semibold">Kapsamlı Sistem Dokümantasyonu</h4>
                   <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                    <ul className="space-y-2 text-white/80">
-                      <li>• <strong>RAM:</strong> Minimum 4GB, Önerilen 8GB</li>
-                      <li>• <strong>Depolama:</strong> Minimum 32GB microSD kart (Class 10)</li>
-                      <li>• <strong>İşletim Sistemi:</strong> Raspberry Pi OS (64-bit)</li>
-                      <li>• <strong>Ağ:</strong> Ethernet bağlantısı önerilen</li>
-                    </ul>
+                    <div className="space-y-3">
+                      <p className="text-white/80 text-sm">
+                        Tam kurulum kılavuzu Pi5 Supernode sisteminin tüm bileşenlerini kapsar:
+                      </p>
+                      <ul className="space-y-1 text-white/70 text-sm">
+                        <li>• <strong>Sistem Analizi:</strong> Tüm bileşenlerin detaylı analizi</li>
+                        <li>• <strong>Kurulum Prosedürleri:</strong> Adım adım kurulum talimatları</li>
+                        <li>• <strong>API Entegrasyonu:</strong> Backend servis bağlantıları</li>
+                        <li>• <strong>Grafana Monitoring:</strong> İzleme sistemi kurulumu</li>
+                        <li>• <strong>WireGuard VPN:</strong> VPN sistem entegrasyonu</li>
+                        <li>• <strong>Güvenlik:</strong> Sistem sıkılaştırma prosedürleri</li>
+                        <li>• <strong>Sorun Giderme:</strong> Kapsamlı hata çözümleri</li>
+                      </ul>
+                    </div>
                   </div>
                   
-                  <CodeBlock
-                    language="bash"
-                    title="Docker kurulum scripti"
-                    code={`# Docker kurulum scripti
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-
-# Docker kullanıcı iznini ayarlayın
-sudo usermod -aG docker $USER
-
-# Docker Compose kurulumu
-sudo apt install -y docker-compose-plugin`}
-                  />
+                  <div className="space-y-3">
+                    <Button variant="outline" className="w-full justify-start">
+                      <Icons.FileText className="w-4 h-4 mr-2" />
+                      Tam Kurulum Kılavuzunu Aç (install_document.md)
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start">
+                      <Icons.Download className="w-4 h-4 mr-2" />
+                      Dokümantasyonu PDF Olarak İndir
+                    </Button>
+                  </div>
                 </div>
               </Card>
 
               {/* Quick Links */}
-              <Card title="Hızlı Bağlantılar">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+              <Card title="Hızlı Erişim ve Kaynaklar">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <Button variant="outline" className="justify-start">
                     <Icons.ExternalLink className="w-4 h-4 mr-2" />
-                    GitHub Repository
+                    Teknik Spesifikasyonlar
                   </Button>
                   <Button variant="outline" className="justify-start">
-                    <Icons.MessageSquare className="w-4 h-4 mr-2" />
-                    Community Forum
+                    <Icons.Wrench className="w-4 h-4 mr-2" />
+                    WireGuard Kurulum Kılavuzu
                   </Button>
                   <Button variant="outline" className="justify-start">
-                    <Icons.Bug className="w-4 h-4 mr-2" />
-                    Hata Bildir
+                    <Icons.Code className="w-4 h-4 mr-2" />
+                    Yeniden Yapılandırma Planı
                   </Button>
                   <Button variant="outline" className="justify-start">
-                    <Icons.HelpCircle className="w-4 h-4 mr-2" />
-                    Destek Merkezi
+                    <Icons.Layers className="w-4 h-4 mr-2" />
+                    Uygulama Kılavuzu
                   </Button>
                 </div>
               </Card>
