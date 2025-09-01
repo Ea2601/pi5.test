@@ -1,0 +1,344 @@
+/* Pi5 Supernode - CTA Button Design System */
+
+/* ================================
+   Base CTA Button Styles
+   ================================ */
+
+.cta-button {
+  /* Core Structure */
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  
+  /* Typography - Single Line Enforcement */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
+  /* Dimensions */
+  min-height: 48px;
+  min-width: 48px;
+  padding: 12px 16px;
+  
+  /* Visual Design */
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+  
+  /* Animations */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Accessibility */
+  outline: none;
+}
+
+.cta-button:focus-visible {
+  box-shadow: 0 0 0 2px #00A36C, 0 0 0 4px rgba(0, 163, 108, 0.2);
+}
+
+/* ================================
+   CTA Button Variants
+   ================================ */
+
+/* Primary CTA (Default) */
+.cta-primary {
+  background: rgba(0, 163, 108, 0.2);
+  border: 1px solid rgba(0, 163, 108, 0.3);
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(0, 163, 108, 0.6);
+}
+
+.cta-primary:hover {
+  background: rgba(0, 163, 108, 0.4);
+  border-color: rgba(0, 201, 129, 0.6);
+  box-shadow: 
+    0 8px 25px rgba(0, 163, 108, 0.25),
+    0 4px 12px rgba(0, 0, 0, 0.3);
+  transform: scale(1.02);
+}
+
+.cta-primary:active {
+  transform: scale(0.98);
+}
+
+/* Secondary CTA (Outline) */
+.cta-secondary {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.cta-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1);
+  transform: scale(1.02);
+}
+
+/* Danger CTA (Destructive) */
+.cta-danger {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ffffff;
+}
+
+.cta-danger:hover {
+  background: rgba(239, 68, 68, 0.4);
+  border-color: rgba(248, 113, 113, 0.6);
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.25);
+  transform: scale(1.02);
+}
+
+/* ================================
+   Size Variations
+   ================================ */
+
+.cta-sm {
+  height: 36px;
+  min-width: 36px;
+  padding: 8px 12px;
+  font-size: 14px;
+  gap: 6px;
+  border-radius: 12px;
+}
+
+.cta-md {
+  height: 48px;
+  min-width: 48px;
+  padding: 12px 16px;
+  font-size: 16px;
+  gap: 8px;
+  border-radius: 16px;
+}
+
+.cta-lg {
+  height: 56px;
+  min-width: 56px;
+  padding: 16px 24px;
+  font-size: 18px;
+  gap: 10px;
+  border-radius: 20px;
+}
+
+/* ================================
+   Quick Actions Card Specific
+   ================================ */
+
+.quick-actions-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.quick-action-button {
+  width: 100%;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.quick-action-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+
+.quick-action-text {
+  font-size: 14px;
+  font-weight: 500;
+  truncate: true;
+}
+
+/* ================================
+   Table Action Buttons
+   ================================ */
+
+.table-action-button {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Color-coded table actions */
+.action-edit {
+  background: rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #60A5FA;
+}
+
+.action-edit:hover {
+  background: rgba(59, 130, 246, 0.3);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+.action-block {
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #FBBF24;
+}
+
+.action-block:hover {
+  background: rgba(245, 158, 11, 0.3);
+  border-color: rgba(245, 158, 11, 0.5);
+}
+
+.action-delete {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #F87171;
+}
+
+.action-delete:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+/* ================================
+   Toggle Switches (CTA Controls)
+   ================================ */
+
+.toggle-switch {
+  position: relative;
+  width: 40px;
+  height: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.toggle-switch.active {
+  background: #00A36C;
+  box-shadow: 0 0 16px rgba(0, 163, 108, 0.3);
+}
+
+.toggle-slider {
+  position: absolute;
+  top: 2px;
+  width: 16px;
+  height: 16px;
+  background: #ffffff;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  left: 2px;
+}
+
+.toggle-switch.active .toggle-slider {
+  left: 20px;
+}
+
+/* ================================
+   Responsive Adjustments
+   ================================ */
+
+@media (max-width: 767px) {
+  .cta-button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .quick-action-button {
+    height: 44px;
+    font-size: 14px;
+  }
+  
+  .table-action-button {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .quick-action-text {
+    font-size: 13px;
+  }
+  
+  .quick-action-icon {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* ================================
+   Loading States
+   ================================ */
+
+.cta-loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ================================
+   Special Effects
+   ================================ */
+
+.neon-glow-emerald {
+  box-shadow: 
+    0 0 20px rgba(0, 163, 108, 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.glass-backdrop {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* ================================
+   Accessibility Enhancements
+   ================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-button {
+    transition: none;
+    animation: none;
+  }
+  
+  .cta-button:hover {
+    transform: none;
+  }
+}
+
+.cta-button:focus-visible {
+  outline: 2px solid #00A36C;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .cta-button {
+    border-width: 2px;
+  }
+  
+  .cta-primary {
+    background: rgba(0, 163, 108, 0.4);
+    border-color: rgba(0, 163, 108, 0.8);
+  }
+}

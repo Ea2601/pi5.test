@@ -78,6 +78,43 @@
 
 /* Component layer utilities */
 @layer components {
+  /* CTA Button System */
+  .cta-base {
+    @apply relative overflow-hidden rounded-2xl font-medium transition-all duration-300;
+    @apply focus:outline-none focus:ring-2 focus:ring-emerald-500/50;
+    @apply flex items-center justify-center cursor-pointer;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply whitespace-nowrap;
+  }
+  
+  .cta-primary {
+    @apply bg-emerald-600/20 border border-emerald-500/30 text-white backdrop-blur-md;
+    @apply hover:bg-emerald-500/40 hover:border-emerald-400/60;
+    @apply hover:shadow-lg hover:shadow-emerald-500/25;
+    text-shadow: 0 0 8px rgba(0, 163, 108, 0.6);
+  }
+  
+  .cta-secondary {
+    @apply border border-white/20 text-white backdrop-blur-md;
+    @apply hover:bg-white/15 hover:border-white/40;
+    @apply hover:shadow-lg hover:shadow-white/10;
+  }
+  
+  .cta-sm {
+    @apply px-3 py-2 text-sm h-9 gap-1.5;
+    min-width: 2.25rem;
+  }
+  
+  .cta-md {
+    @apply px-4 py-3 text-base h-12 gap-2;
+    min-width: 3rem;
+  }
+  
+  .cta-lg {
+    @apply px-6 py-4 text-lg h-14 gap-2.5;
+    min-width: 3.5rem;
+  }
+  
   .neon-hover {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -110,7 +147,8 @@
   input[type="reset"],
   [role="button"],
   .btn,
-  .button {
+  .button,
+  .cta-button {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -122,7 +160,8 @@
   input[type="submit"] > *,
   [role="button"] > *,
   .btn > *,
-  .button > * {
+  .button > *,
+  .cta-button > * {
     white-space: nowrap;
   }
 }
