@@ -242,6 +242,8 @@ const VPN: React.FC = () => {
                         <span className="text-white">BLAKE2s</span>
                       </div>
                     </div>
+                  </div>
+                </div>
                 <svg xmlns="http://www.w3.org/2000/svg" 
                      width="24" height="24" viewBox="0 0 24 24" 
                      fill="none" stroke="currentColor" strokeWidth="2" 
@@ -251,6 +253,7 @@ const VPN: React.FC = () => {
                   <rect width="20" height="8" x="2" y="14" rx="2" ry="2"/>
                   <line x1="6" x2="6.01" y1="6" y2="6"/>
                   <line x1="6" x2="6.01" y1="18" y2="18"/>
+                </svg>
                 <svg xmlns="http://www.w3.org/2000/svg" 
                      width="24" height="24" viewBox="0 0 24 24" 
                      fill="none" stroke="currentColor" strokeWidth="2" 
@@ -260,6 +263,7 @@ const VPN: React.FC = () => {
                   <circle cx="9" cy="7" r="4"/>
                   <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
                   <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
                 <svg xmlns="http://www.w3.org/2000/svg" 
                      width="24" height="24" viewBox="0 0 24 24" 
                      fill="none" stroke="currentColor" strokeWidth="2" 
@@ -267,7 +271,6 @@ const VPN: React.FC = () => {
                      className="lucide lucide-shield w-4 h-4 text-purple-400">
                   <path d="M20 13c0 5-3.5 7.5-8 7.5s-8-2.5-8-7.5c0-1.3.3-2.5.8-3.5.5-1 1.2-1.9 2.2-2.6 1-0.7 2.2-1.2 3.5-1.5 1.3-0.3 2.7-0.3 4 0 1.3 0.3 2.5 0.8 3.5 1.5 1 0.7 1.7 1.6 2.2 2.6.5 1 .8 2.2.8 3.5z"/>
                 </svg>
-                </div>
               </div>
             </Card>
           )}
