@@ -326,7 +326,7 @@ const Storage: React.FC = () => {
                 
                 <Button className="w-full">
                   <Icons.Archive className="w-4 h-4 mr-2" />
-                  Yeni Yedekleme Başlat
+                  Yedekle
                 </Button>
               </div>
             </Card>

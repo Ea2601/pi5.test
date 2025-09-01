@@ -166,7 +166,7 @@ const Settings: React.FC = () => {
                   <div className="space-y-4">
                     <Button className="w-full">
                       <Icons.Camera className="w-4 h-4 mr-2" />
-                      Yeni Anlık Görüntü Oluştur
+                      Snapshot Al
                     </Button>
                     
                     <div className="space-y-2">
@@ -225,15 +225,15 @@ const Settings: React.FC = () => {
                   <div className="space-y-4">
                     <Button variant="outline" className="w-full justify-start">
                       <Icons.Key className="w-4 h-4 mr-2" />
-                      API Anahtarlarını Yenile
+                      API Yenile
                     </Button>
                     <Button variant="outline" className="w-full justify-start">
                       <Icons.Shield className="w-4 h-4 mr-2" />
-                      Güvenlik Taraması
+                      Güvenlik Tara
                     </Button>
                     <Button variant="outline" className="w-full justify-start">
                       <Icons.FileText className="w-4 h-4 mr-2" />
-                      Denetim Günlükleri
+                      Denetim Log
                     </Button>
                   </div>
                 </Card>

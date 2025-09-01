@@ -312,19 +312,19 @@ const Dashboard: React.FC = () => {
           <div className="space-y-3">
             <Button className="w-full h-12">
               <Icons.Search className="w-4 h-4" />
-              Cihaz Keşfi
+              Cihaz Tara
             </Button>
             <Button variant="outline" className="w-full h-12">
               <Icons.Scan className="w-4 h-4" />
-              Ağ Taraması
+              Ağ Keşfi
             </Button>
             <Button variant="outline" className="w-full h-12">
               <Icons.BarChart3 className="w-4 h-4" />
-              Kullanım Raporu
+              Rapor
             </Button>
             <Button variant="outline" className="w-full h-12">
               <Icons.UserX className="w-4 h-4" />
-              Cihaz Engelle
+              Engelle
             </Button>
           </div>
         </Card>
