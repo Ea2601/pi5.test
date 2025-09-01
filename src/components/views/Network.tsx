@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Wifi, Network as NetworkIcon, Globe, Zap, Settings } from 'lucide-react';
+import * as Icons from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { cn } from '../../lib/utils';
@@ -9,6 +9,7 @@ import { TrafficRuleManager } from '../traffic/TrafficRuleManager';
 import DNSManagement from '../dns/DNSManagement';
 import DHCPManagement from '../dhcp/DHCPManagement';
 import NetworkTopology from '../topology/NetworkTopology';
+import WiFiManagement from '../wifi/WiFiManagement';
 
 interface TabConfig {
   id: string;
@@ -17,12 +18,12 @@ interface TabConfig {
 }
 
 const tabs: TabConfig[] = [
-  { id: 'dns', label: 'DNS', icon: Globe },
-  { id: 'dhcp', label: 'DHCP', icon: NetworkIcon },
-  { id: 'topology', label: 'Ağ Topolojisi', icon: NetworkIcon },
-  { id: 'wifi', label: 'Wi-Fi', icon: Wifi },
-  { id: 'traffic', label: 'Trafik Kuralları', icon: Zap },
-  { id: 'settings', label: 'Ayarlar', icon: Settings }
+  { id: 'dns', label: 'DNS', icon: Icons.Globe },
+  { id: 'dhcp', label: 'DHCP', icon: Icons.Network },
+  { id: 'topology', label: 'Ağ Topolojisi', icon: Icons.Network },
+  { id: 'wifi', label: 'Wi-Fi', icon: Icons.Wifi },
+  { id: 'traffic', label: 'Trafik Kuralları', icon: Icons.Zap },
+  { id: 'settings', label: 'Ayarlar', icon: Icons.Settings }
 ];
 
 const Network: React.FC = () => {
@@ -37,28 +38,7 @@ const Network: React.FC = () => {
       case 'topology':
         return <NetworkTopology />;
       case 'wifi':
-        return (
-          <Card title="Wi-Fi Yönetimi">
-            <div className="space-y-4">
-              <p className="text-white/70">Wi-Fi ayarları yakında eklenecek...</p>
-              <Button variant="outline" className="w-full">
-                <div className="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" 
-                       width="24" height="24" viewBox="0 0 24 24" 
-                       fill="none" stroke="currentColor" strokeWidth="2" 
-                       strokeLinecap="round" strokeLinejoin="round" 
-                       className="lucide lucide-wifi w-4 h-4 mr-2">
-                    <path d="M12 20h.01"/>
-                    <path d="M2 8.82a15 15 0 0 1 20 0"/>
-                    <path d="M5 12.859a10 10 0 0 1 14 0"/>
-                    <path d="M8.5 16.429a5 5 0 0 1 7 0"/>
-                  </svg>
-                  <span className="truncate">Wi-Fi Yapılandırması</span>
-                </div>
-              </Button>
-            </div>
-          </Card>
-        );
+        return <WiFiManagement />;
       case 'traffic':
         return <TrafficRuleManager />;
       case 'settings':
