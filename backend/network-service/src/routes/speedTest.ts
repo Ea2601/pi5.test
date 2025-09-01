@@ -1,55 +1,142 @@
 import express from 'express';
 import Joi from 'joi';
-import { SpeedTestService } from '../services/SpeedTestService';
 import { logger } from '../utils/logger';
 
 const router = express.Router();
-const speedTestService = new SpeedTestService();
 
-// Validation schemas
-const profileSchema = Joi.object({
-  profile_name: Joi.string().min(1).max(255).required(),
-  description: Joi.string().max(500).optional(),
-  profile_type: Joi.string().valid('fast', 'balanced', 'deep_analysis').default('balanced'),
-  preferred_engine: Joi.string().valid('ookla', 'iperf3', 'flent', 'irtt').default('ookla'),
-  parallel_threads: Joi.number().integer().min(1).max(16).default(4),
-  test_duration_seconds: Joi.number().integer().min(5).max(300).default(30),
-  warmup_seconds: Joi.number().integer().min(0).max(30).default(5),
-  default_interface: Joi.string().default('auto'),
-  ip_version: Joi.string().valid('ipv4', 'ipv6', 'dual_stack').default('ipv4'),
-  sampling_method: Joi.string().valid('minimum', 'average', 'p90', 'p95', 'p99').default('average')
-});
+// Mock Speed Test data
+const mockProfiles = [
+  {
+    id: 'profile-fast',
+    profile_name: 'Hızlı Test',
+    description: 'Hızlı genel bağlantı kontrolü',
+    profile_type: 'fast',
+    preferred_engine: 'ookla',
+    parallel_threads: 2,
+    test_duration_seconds: 15,
+    warmup_seconds: 2,
+    default_interface: 'auto',
+    ip_version: 'ipv4',
+    sampling_method: 'average',
+    is_default: true,
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: 'profile-balanced',
+    profile_name: 'Dengeli Test',
+    description: 'Dengeli performans ve doğruluk',
+    profile_type: 'balanced',
+    preferred_engine: 'ookla',
+    parallel_threads: 4,
+    test_duration_seconds: 30,
+    warmup_seconds: 5,
+    default_interface: 'auto',
+    ip_version: 'ipv4',
+    sampling_method: 'p90',
+    is_default: false,
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: 'profile-deep',
+    profile_name: 'Derin Analiz',
+    description: 'Kapsamlı QoE analizi',
+    profile_type: 'deep_analysis',
+    preferred_engine: 'iperf3',
+    parallel_threads: 8,
+    test_duration_seconds: 60,
+    warmup_seconds: 10,
+    default_interface: 'auto',
+    ip_version: 'dual_stack',
+    sampling_method: 'p95',
+    is_default: false,
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  }
+];
 
-const serverSchema = Joi.object({
-  server_name: Joi.string().min(1).max(255).required(),
-  server_url: Joi.string().uri().required(),
-  server_type: Joi.string().valid('ookla', 'iperf3', 'custom').default('ookla'),
-  country_code: Joi.string().length(2).required(),
-  city: Joi.string().max(255).optional(),
-  sponsor: Joi.string().max(255).optional(),
-  port: Joi.number().integer().min(1).max(65535).default(80),
-  protocol: Joi.string().valid('http', 'https', 'tcp', 'udp').default('https')
-});
+const mockServers = [
+  {
+    id: 'server-tr-1',
+    server_name: 'Türkiye - İstanbul (Türk Telekom)',
+    server_url: 'http://speedtest.istanbul.net.tr',
+    server_type: 'ookla',
+    country_code: 'TR',
+    city: 'İstanbul',
+    sponsor: 'Türk Telekom',
+    avg_latency_ms: 15,
+    reliability_score: 0.95,
+    is_preferred: true,
+    is_whitelisted: true,
+    is_blacklisted: false,
+    priority_score: 95,
+    port: 8080,
+    protocol: 'http',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: 'server-ae-1',
+    server_name: 'UAE - Dubai (Etisalat)',
+    server_url: 'http://speedtest.etisalat.ae',
+    server_type: 'ookla',
+    country_code: 'AE',
+    city: 'Dubai',
+    sponsor: 'Etisalat',
+    avg_latency_ms: 25,
+    reliability_score: 0.92,
+    is_preferred: true,
+    is_whitelisted: true,
+    is_blacklisted: false,
+    priority_score: 90,
+    port: 8080,
+    protocol: 'http',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  }
+];
 
-const dnsMonitorSchema = Joi.object({
-  monitor_name: Joi.string().min(1).max(255).required(),
-  target_ip: Joi.string().ip().required(),
-  target_hostname: Joi.string().max(255).optional(),
-  target_description: Joi.string().max(500).optional(),
-  interval_ms: Joi.number().integer().min(100).max(60000).default(1000),
-  packet_size_bytes: Joi.number().integer().min(32).max(1500).default(64),
-  timeout_ms: Joi.number().integer().min(1000).max(10000).default(5000),
-  warning_rtt_ms: Joi.number().integer().min(1).default(50),
-  critical_rtt_ms: Joi.number().integer().min(1).default(100)
-});
+const mockNetworkInterfaces = [
+  {
+    id: 'iface-1',
+    interface_name: 'eth0',
+    interface_type: 'ethernet',
+    description: 'Ana Ethernet Bağlantısı',
+    ip_address: '192.168.1.100',
+    is_up: true,
+    is_running: true,
+    speed_mbps: 1000,
+    mtu: 1500,
+    is_enabled: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: 'iface-2',
+    interface_name: 'wlan0',
+    interface_type: 'wifi',
+    description: 'Wi-Fi Bağlantısı',
+    ip_address: '192.168.1.101',
+    is_up: true,
+    is_running: true,
+    speed_mbps: 867,
+    mtu: 1500,
+    is_enabled: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  }
+];
 
 // GET /speed-test/profiles - List speed test profiles
 router.get('/profiles', async (req, res) => {
   try {
-    const profiles = await speedTestService.getProfiles();
     res.json({
       success: true,
-      data: profiles
+      data: mockProfiles
     });
   } catch (error) {
     logger.error('Get speed test profiles error:', error);
@@ -60,39 +147,12 @@ router.get('/profiles', async (req, res) => {
   }
 });
 
-// POST /speed-test/profiles - Create speed test profile
-router.post('/profiles', async (req, res) => {
-  try {
-    const { error } = profileSchema.validate(req.body);
-    if (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.details[0].message
-      });
-    }
-
-    const profile = await speedTestService.createProfile(req.body);
-    
-    res.status(201).json({
-      success: true,
-      data: profile
-    });
-  } catch (error) {
-    logger.error('Create speed test profile error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to create speed test profile'
-    });
-  }
-});
-
 // GET /speed-test/servers - List speed test servers
 router.get('/servers', async (req, res) => {
   try {
-    const servers = await speedTestService.getServers();
     res.json({
       success: true,
-      data: servers
+      data: mockServers
     });
   } catch (error) {
     logger.error('Get speed test servers error:', error);
@@ -103,28 +163,18 @@ router.get('/servers', async (req, res) => {
   }
 });
 
-// POST /speed-test/servers - Create speed test server
-router.post('/servers', async (req, res) => {
+// GET /speed-test/interfaces - Get network interfaces
+router.get('/interfaces', async (req, res) => {
   try {
-    const { error } = serverSchema.validate(req.body);
-    if (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.details[0].message
-      });
-    }
-
-    const server = await speedTestService.createServer(req.body);
-    
-    res.status(201).json({
+    res.json({
       success: true,
-      data: server
+      data: mockNetworkInterfaces
     });
   } catch (error) {
-    logger.error('Create speed test server error:', error);
+    logger.error('Get network interfaces error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to create speed test server'
+      message: 'Failed to fetch network interfaces'
     });
   }
 });
@@ -132,23 +182,50 @@ router.post('/servers', async (req, res) => {
 // POST /speed-test/run - Execute speed test
 router.post('/run', async (req, res) => {
   try {
-    const { profile_id, server_id, interface, ip_version, custom_settings } = req.body;
+    const { profile, server, interface: testInterface, ip_version } = req.body;
     
-    if (!profile_id) {
-      return res.status(400).json({
-        success: false,
-        message: 'Profile ID is required'
-      });
-    }
+    // Simulate speed test execution
+    const testId = `test-${Date.now()}`;
+    
+    // Generate realistic results
+    const download = Math.random() * 200 + 50; // 50-250 Mbps
+    const upload = Math.random() * 100 + 20;   // 20-120 Mbps
+    const ping = Math.random() * 50 + 10;      // 10-60 ms
+    const jitter = Math.random() * 15 + 2;     // 2-17 ms
+    const loss = Math.random() * 2;            // 0-2% loss
 
-    const result = await speedTestService.runSpeedTest({
-      profile_id,
-      server_id,
-      interface,
-      ip_version,
-      custom_settings
-    });
-    
+    const idlePing = ping;
+    const loadedPing = ping + (Math.random() * 50 + 10);
+    const bloatMs = loadedPing - idlePing;
+
+    let bufferbloatScore = 'A';
+    if (bloatMs > 100) bufferbloatScore = 'F';
+    else if (bloatMs > 50) bufferbloatScore = 'D';
+    else if (bloatMs > 20) bufferbloatScore = 'C';
+    else if (bloatMs > 10) bufferbloatScore = 'B';
+
+    const result = {
+      id: testId,
+      profile_id: profile?.id,
+      server_id: server?.id,
+      test_engine: profile?.preferred_engine || 'ookla',
+      interface_used: testInterface || 'auto',
+      ip_version: ip_version || 'ipv4',
+      download_mbps: download,
+      upload_mbps: upload,
+      ping_ms: ping,
+      jitter_ms: jitter,
+      packet_loss_percent: loss,
+      idle_ping_ms: idlePing,
+      loaded_ping_ms: loadedPing,
+      bufferbloat_score: bufferbloatScore,
+      mos_score: Math.max(1, 5 - (jitter / 10) - (loss * 0.5)),
+      success: true,
+      test_started_at: new Date().toISOString(),
+      test_completed_at: new Date().toISOString(),
+      created_at: new Date().toISOString()
+    };
+
     res.json({
       success: true,
       data: result
@@ -165,17 +242,20 @@ router.post('/run', async (req, res) => {
 // GET /speed-test/results - Get speed test results
 router.get('/results', async (req, res) => {
   try {
-    const { profile_id, server_id, interface, start_date, end_date, limit } = req.query;
+    const { limit } = req.query;
     
-    const results = await speedTestService.getResults({
-      profile_id: profile_id as string,
-      server_id: server_id as string,
-      interface: interface as string,
-      start_date: start_date as string,
-      end_date: end_date as string,
-      limit: limit ? parseInt(limit as string) : undefined
-    });
-    
+    // Generate mock results
+    const results = Array.from({ length: parseInt(limit as string) || 10 }, (_, i) => ({
+      id: `result-${i}`,
+      download_mbps: Math.random() * 200 + 50,
+      upload_mbps: Math.random() * 100 + 20,
+      ping_ms: Math.random() * 50 + 10,
+      bufferbloat_score: ['A', 'B', 'C', 'D', 'F'][Math.floor(Math.random() * 5)],
+      success: Math.random() > 0.1,
+      test_started_at: new Date(Date.now() - i * 3600000).toISOString(),
+      created_at: new Date(Date.now() - i * 3600000).toISOString()
+    }));
+
     res.json({
       success: true,
       data: results
@@ -192,9 +272,21 @@ router.get('/results', async (req, res) => {
 // GET /speed-test/stats - Get speed test statistics
 router.get('/stats', async (req, res) => {
   try {
-    const { timeRange } = req.query;
-    const stats = await speedTestService.getStats(timeRange as string);
-    
+    const stats = {
+      total_tests: Math.floor(Math.random() * 100) + 20,
+      successful_tests: Math.floor(Math.random() * 90) + 15,
+      failed_tests: Math.floor(Math.random() * 10) + 2,
+      avg_download_mbps: Math.random() * 150 + 50,
+      avg_upload_mbps: Math.random() * 80 + 20,
+      avg_ping_ms: Math.random() * 40 + 15,
+      last_test_date: new Date().toISOString(),
+      popular_servers: [
+        { server_name: 'Türkiye - İstanbul', test_count: 15, avg_download: 120.5 },
+        { server_name: 'UAE - Dubai', test_count: 8, avg_download: 95.2 }
+      ],
+      performance_trends: []
+    };
+
     res.json({
       success: true,
       data: stats
@@ -208,46 +300,29 @@ router.get('/stats', async (req, res) => {
   }
 });
 
-// POST /speed-test/servers/discover - Discover Ookla servers
-router.post('/servers/discover', async (req, res) => {
-  try {
-    const servers = await speedTestService.discoverOoklaServers();
-    res.json({
-      success: true,
-      data: servers,
-      message: `${servers.length} servers discovered`
-    });
-  } catch (error) {
-    logger.error('Discover Ookla servers error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to discover Ookla servers'
-    });
-  }
-});
-
-// POST /speed-test/servers/:id/test-latency - Test server latency
-router.post('/servers/:id/test-latency', async (req, res) => {
-  try {
-    const result = await speedTestService.testServerLatency(req.params.id);
-    res.json({
-      success: result.success,
-      data: result
-    });
-  } catch (error) {
-    logger.error('Test server latency error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to test server latency'
-    });
-  }
-});
-
 // DNS Ping Monitor Routes
 // GET /speed-test/dns-monitors - List DNS ping monitors
 router.get('/dns-monitors', async (req, res) => {
   try {
-    const monitors = await speedTestService.getDNSMonitors();
+    const monitors = [
+      {
+        id: 'monitor-1',
+        monitor_name: 'Cloudflare Primary',
+        target_ip: '1.1.1.1',
+        target_hostname: 'one.one.one.one',
+        interval_ms: 1000,
+        packet_size_bytes: 64,
+        timeout_ms: 5000,
+        warning_rtt_ms: 50,
+        critical_rtt_ms: 100,
+        is_active: true,
+        last_rtt_ms: Math.random() * 30 + 10,
+        last_status: 'healthy',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+    ];
+
     res.json({
       success: true,
       data: monitors
@@ -264,19 +339,18 @@ router.get('/dns-monitors', async (req, res) => {
 // POST /speed-test/dns-monitors - Create DNS monitor
 router.post('/dns-monitors', async (req, res) => {
   try {
-    const { error } = dnsMonitorSchema.validate(req.body);
-    if (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.details[0].message
-      });
-    }
+    const newMonitor = {
+      id: `monitor-${Date.now()}`,
+      ...req.body,
+      is_active: false,
+      last_status: 'unknown',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
 
-    const monitor = await speedTestService.createDNSMonitor(req.body);
-    
     res.status(201).json({
       success: true,
-      data: monitor
+      data: newMonitor
     });
   } catch (error) {
     logger.error('Create DNS monitor error:', error);
@@ -287,74 +361,22 @@ router.post('/dns-monitors', async (req, res) => {
   }
 });
 
-// PUT /speed-test/dns-monitors/:id - Update DNS monitor
-router.put('/dns-monitors/:id', async (req, res) => {
-  try {
-    const monitor = await speedTestService.updateDNSMonitor(req.params.id, req.body);
-    
-    if (!monitor) {
-      return res.status(404).json({
-        success: false,
-        message: 'DNS monitor not found'
-      });
-    }
-
-    res.json({
-      success: true,
-      data: monitor
-    });
-  } catch (error) {
-    logger.error('Update DNS monitor error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to update DNS monitor'
-    });
-  }
-});
-
-// POST /speed-test/dns-monitors/:id/start - Start DNS monitor
-router.post('/dns-monitors/:id/start', async (req, res) => {
-  try {
-    const success = await speedTestService.startDNSMonitor(req.params.id);
-    res.json({
-      success,
-      message: success ? 'DNS monitor started' : 'Failed to start DNS monitor'
-    });
-  } catch (error) {
-    logger.error('Start DNS monitor error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to start DNS monitor'
-    });
-  }
-});
-
-// POST /speed-test/dns-monitors/:id/stop - Stop DNS monitor
-router.post('/dns-monitors/:id/stop', async (req, res) => {
-  try {
-    const success = await speedTestService.stopDNSMonitor(req.params.id);
-    res.json({
-      success,
-      message: success ? 'DNS monitor stopped' : 'Failed to stop DNS monitor'
-    });
-  } catch (error) {
-    logger.error('Stop DNS monitor error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to stop DNS monitor'
-    });
-  }
-});
-
 // GET /speed-test/dns-monitors/:id/results - Get DNS ping results
 router.get('/dns-monitors/:id/results', async (req, res) => {
   try {
     const { hours } = req.query;
-    const results = await speedTestService.getDNSPingResults(
-      req.params.id, 
-      hours ? parseInt(hours as string) : 1
-    );
+    const hoursBack = parseInt(hours as string) || 1;
     
+    // Generate mock ping results
+    const results = Array.from({ length: hoursBack * 60 }, (_, i) => ({
+      id: `result-${i}`,
+      monitor_id: req.params.id,
+      rtt_ms: Math.random() * 50 + 10,
+      jitter_ms: Math.random() * 10 + 1,
+      packet_loss_percent: Math.random() * 2,
+      timestamp: new Date(Date.now() - i * 60000).toISOString()
+    }));
+
     res.json({
       success: true,
       data: results
@@ -368,110 +390,32 @@ router.get('/dns-monitors/:id/results', async (req, res) => {
   }
 });
 
-// GET /speed-test/interfaces - Get network interfaces
-router.get('/interfaces', async (req, res) => {
-  try {
-    const interfaces = await speedTestService.getNetworkInterfaces();
-    res.json({
-      success: true,
-      data: interfaces
-    });
-  } catch (error) {
-    logger.error('Get network interfaces error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch network interfaces'
-    });
-  }
-});
-
-// POST /speed-test/interfaces/discover - Discover network interfaces
-router.post('/interfaces/discover', async (req, res) => {
-  try {
-    const interfaces = await speedTestService.discoverNetworkInterfaces();
-    res.json({
-      success: true,
-      data: interfaces,
-      message: `${interfaces.length} network interfaces discovered`
-    });
-  } catch (error) {
-    logger.error('Discover network interfaces error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to discover network interfaces'
-    });
-  }
-});
-
 // POST /speed-test/servers/select-optimal - Select optimal server
 router.post('/servers/select-optimal', async (req, res) => {
   try {
-    const { country_preference, max_latency_ms, exclude_countries } = req.body;
+    const { country_preference } = req.body;
     
-    const server = await speedTestService.selectOptimalServer({
-      country_preference,
-      max_latency_ms,
-      exclude_countries
-    });
+    // Select server based on preferences
+    let selectedServer = mockServers[0]; // Default to first server
     
-    if (!server) {
-      return res.status(404).json({
-        success: false,
-        message: 'No suitable server found'
-      });
+    if (country_preference && country_preference.length > 0) {
+      const preferredServer = mockServers.find(s => 
+        country_preference.includes(s.country_code)
+      );
+      if (preferredServer) {
+        selectedServer = preferredServer;
+      }
     }
 
     res.json({
       success: true,
-      data: server
+      data: selectedServer
     });
   } catch (error) {
     logger.error('Select optimal server error:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to select optimal server'
-    });
-  }
-});
-
-// POST /speed-test/analyze-bufferbloat/:id - Analyze bufferbloat
-router.post('/analyze-bufferbloat/:id', async (req, res) => {
-  try {
-    const analysis = await speedTestService.analyzeBufferbloat(req.params.id);
-    res.json({
-      success: true,
-      data: analysis
-    });
-  } catch (error) {
-    logger.error('Analyze bufferbloat error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to analyze bufferbloat'
-    });
-  }
-});
-
-// GET /speed-test/progress/:id - Get test progress
-router.get('/progress/:id', async (req, res) => {
-  try {
-    const progress = await speedTestService.getTestProgress(req.params.id);
-    
-    if (!progress) {
-      return res.status(404).json({
-        success: false,
-        message: 'Test progress not found'
-      });
-    }
-
-    res.json({
-      success: true,
-      data: progress
-    });
-  } catch (error) {
-    logger.error('Get test progress error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get test progress'
     });
   }
 });

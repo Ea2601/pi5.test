@@ -10,6 +10,7 @@ import DNSManagement from '../dns/DNSManagement';
 import DHCPManagement from '../dhcp/DHCPManagement';
 import NetworkTopology from '../topology/NetworkTopology';
 import WiFiManagement from '../wifi/WiFiManagement';
+import SpeedTestManagement from '../speedTest/SpeedTestManagement';
 
 interface TabConfig {
   id: string;
@@ -22,6 +23,7 @@ const tabs: TabConfig[] = [
   { id: 'dhcp', label: 'DHCP', icon: Icons.Network },
   { id: 'topology', label: 'Ağ Topolojisi', icon: Icons.Network },
   { id: 'wifi', label: 'Wi-Fi', icon: Icons.Wifi },
+  { id: 'speed-test', label: 'Hız Testi', icon: Icons.Gauge },
   { id: 'traffic', label: 'Trafik Kuralları', icon: Icons.Zap },
   { id: 'settings', label: 'Ayarlar', icon: Icons.Settings }
 ];
@@ -39,6 +41,8 @@ const Network: React.FC = () => {
         return <NetworkTopology />;
       case 'wifi':
         return <WiFiManagement />;
+      case 'speed-test':
+        return <SpeedTestManagement />;
       case 'traffic':
         return <TrafficRuleManager />;
       case 'settings':
