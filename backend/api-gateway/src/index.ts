@@ -71,6 +71,13 @@ app.use('/api/v1/automation', createProxyMiddleware({
   pathRewrite: { '^/api/v1/automation': '' }
 }));
 
+// Enhanced traffic rules proxy
+app.use('/api/v1/traffic', createProxyMiddleware({
+  target: `http://localhost:${process.env.NETWORK_SERVICE_PORT || 3001}`,
+  changeOrigin: true,
+  pathRewrite: { '^/api/v1/traffic': '/enhanced-traffic' }
+}));
+
 // Error handling
 app.use(errorHandler);
 

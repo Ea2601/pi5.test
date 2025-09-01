@@ -9,6 +9,7 @@ import dhcpRoutes from './routes/dhcp';
 import topologyRoutes from './routes/topology';
 import wifiRoutes from './routes/wifi';
 import speedTestRoutes from './routes/speedTest';
+import enhancedTrafficRoutes from './routes/enhancedTraffic';
 import healthRoutes from './routes/health';
 
 dotenv.config();
@@ -34,6 +35,7 @@ app.use('/dhcp', dhcpRoutes);
 app.use('/topology', topologyRoutes);
 app.use('/wifi', wifiRoutes);
 app.use('/speed-test', speedTestRoutes);
+app.use('/enhanced-traffic', enhancedTrafficRoutes);
 
 app.listen(PORT, () => {
   logger.info(`Network Service running on port ${PORT}`);
