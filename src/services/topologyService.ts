@@ -267,7 +267,10 @@ class TopologyService {
     protocol_distribution: Record<string, number>;
   }> {
     try {
-      const response = await apiClient.get(`/topology/traffic-analysis?range=${timeRange}`);
+      const response = await apiClient.request({
+        method: 'GET',
+        url: `/topology/traffic-analysis?range=${timeRange}`
+      });
       return response.data;
     } catch (error) {
       console.error('Error analyzing traffic patterns:', error);
