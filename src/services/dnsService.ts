@@ -237,7 +237,16 @@ class DNSService {
         method: 'GET',
         url: `/api/v1/network/dns/stats?range=${timeRange}`
       });
-      return response.data;
+      return response.data || {
+        total_queries: 0,
+        blocked_queries: 0,
+        cache_hit_ratio: 0,
+        average_response_time: 0,
+        top_domains: [],
+        top_blocked_domains: [],
+        queries_by_type: {},
+        queries_by_device: {}
+      };
     } catch (error) {
       console.error('Error fetching DNS stats:', error);
       return {
