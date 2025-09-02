@@ -13,7 +13,7 @@ class UnifiedApiClient {
 
   constructor(serviceName: string, baseURL?: string) {
     this.serviceName = serviceName;
-    this.baseURL = baseURL || `http://localhost:3000`;
+    this.baseURL = baseURL || `http://localhost:5173`;
   }
 
   private async request<T>(config: RequestInit & { url: string }): Promise<ApiResponse<T>> {
