@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 
-const app = express();
+const app: express.Application = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 // Health check endpoint
-app.get('/health', (req, res) => {
+app.get('/health', (req: express.Request, res: express.Response) => {
   res.json({ 
     status: 'healthy', 
     timestamp: new Date().toISOString(),
@@ -18,7 +18,7 @@ app.get('/health', (req, res) => {
 });
 
 // System metrics endpoint
-app.get('/api/v1/system/metrics', (req, res) => {
+app.get('/api/v1/system/metrics', (req: express.Request, res: express.Response) => {
   try {
     const metrics = {
       cpu: Math.random() * 100,
@@ -43,7 +43,7 @@ app.get('/api/v1/system/metrics', (req, res) => {
 });
 
 // Network device endpoints
-app.get('/api/v1/network/devices', (req, res) => {
+app.get('/api/v1/network/devices', (req: express.Request, res: express.Response) => {
   try {
     const devices = [
       {
