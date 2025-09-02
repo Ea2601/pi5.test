@@ -1,7 +1,21 @@
-// Re-export unified logger for frontend use
-export { UnifiedLogger, logger } from '../../shared/utils/logger';
-
 // Frontend-specific logging utilities
+const logger = {
+  info: (message: string, meta?: Record<string, any>) => {
+    console.log(`[INFO] ${message}`, meta || '');
+  },
+  error: (message: string, meta?: Record<string, any>) => {
+    console.error(`[ERROR] ${message}`, meta || '');
+  },
+  warn: (message: string, meta?: Record<string, any>) => {
+    console.warn(`[WARN] ${message}`, meta || '');
+  },
+  debug: (message: string, meta?: Record<string, any>) => {
+    console.debug(`[DEBUG] ${message}`, meta || '');
+  }
+};
+
+export { logger };
+
 export const frontendLogger = {
   pageView: (page: string, props?: Record<string, any>) => {
     if (typeof window !== 'undefined' && window.gtag) {
