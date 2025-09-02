@@ -280,134 +280,263 @@ const Settings: React.FC = () => {
 
           {activeTab === 'documentation' && (
             <div className="space-y-6">
-              {/* Search */}
-              <Card title="Dökümantasyon Arama">
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1">
-                    <div className="relative">
-                      <Icons.Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60" />
-                      <input
-                        type="text"
-                        placeholder="Dökümantasyonda ara..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Sample Documentation */}
-              <Card title="Pi5 Supernode Tam Kurulum Kılavuzu">
+              {/* Comprehensive Documentation */}
+              <Card title="Pi5 Supernode Kapsamlı Sistem Dokümantasyonu">
                 <div className="space-y-4">
-                  <h4 className="text-white font-semibold">Kapsamlı Sistem Dokümantasyonu</h4>
+                  <h4 className="text-white font-semibold">Güncellenmiş Tam Teknik Dokümantasyon</h4>
                   <div className="bg-white/5 rounded-xl p-4 border border-white/10">
                     <div className="space-y-3">
-                      <Button variant="outline" className="w-full justify-start">
-                        <div className="flex items-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" 
-                               width="24" height="24" viewBox="0 0 24 24" 
-                               fill="none" stroke="currentColor" strokeWidth="2" 
-                               strokeLinecap="round" strokeLinejoin="round" 
-                               className="lucide lucide-file-text w-4 h-4 mr-2">
-                            <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>
-                            <path d="M14 2v4a2 2 0 0 0 2 2h4"/>
-                            <path d="M10 9H8"/>
-                            <path d="M16 13H8"/>
-                            <path d="M16 17H8"/>
-                          </svg>
-                          <span className="truncate">Tam Kurulum Kılavuzunu Aç</span>
-                        </div>
-                      </Button>
-                        <li>• <strong>Sistem Analizi:</strong> Tüm bileşenlerin detaylı analizi</li>
-                        <li>• <strong>Kurulum Prosedürleri:</strong> Adım adım kurulum talimatları</li>
-                        <li>• <strong>API Entegrasyonu:</strong> Backend servis bağlantıları</li>
-                        <li>• <strong>Grafana Monitoring:</strong> İzleme sistemi kurulumu</li>
-                      <Button variant="outline" className="w-full justify-start">
-                        <div className="flex items-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" 
-                               width="24" height="24" viewBox="0 0 24 24" 
-                               fill="none" stroke="currentColor" strokeWidth="2" 
-                               strokeLinecap="round" strokeLinejoin="round" 
-                               className="lucide lucide-download w-4 h-4 mr-2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                            <polyline points="7,10 12,15 17,10"/>
-                            <line x1="12" x2="12" y1="15" y2="3"/>
-                          </svg>
-                          <span className="truncate">PDF İndir</span>
-                        </div>
-                      </Button>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <Button variant="outline" className="w-full justify-start h-12">
+                          <div className="flex items-center">
+                            <Icons.FileText className="w-4 h-4 mr-2" />
+                            <div className="text-left">
+                              <span className="block">Kapsamlı Dokümantasyon</span>
+                              <span className="block text-xs text-white/60">Sistem analizi, kurulum, API</span>
+                            </div>
+                          </div>
+                        </Button>
+                        <Button variant="outline" className="w-full justify-start h-12">
+                          <div className="flex items-center">
+                            <Icons.Book className="w-4 h-4 mr-2" />
+                            <div className="text-left">
+                              <span className="block">Hızlı Kurulum</span>
+                              <span className="block text-xs text-white/60">One-line installation</span>
+                            </div>
+                          </div>
+                        </Button>
+                        <Button variant="outline" className="w-full justify-start h-12">
+                          <div className="flex items-center">
+                            <Icons.Map className="w-4 h-4 mr-2" />
+                            <div className="text-left">
+                              <span className="block">Kaynak Haritası</span>
+                              <span className="block text-xs text-white/60">Dosya konumları, API endpoints</span>
+                            </div>
+                          </div>
+                        </Button>
+                        <Button variant="outline" className="w-full justify-start h-12">
+                          <div className="flex items-center">
+                            <Icons.Terminal className="w-4 h-4 mr-2" />
+                            <div className="text-left">
+                              <span className="block">Geliştirici Kılavuzu</span>
+                              <span className="block text-xs text-white/60">Workflow, test, deployment</span>
+                            </div>
+                          </div>
+                        </Button>
+                      </div>
+                      
+                      <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-4">
+                        <h5 className="text-emerald-400 font-medium mb-2">Yenilikler v2.1.4</h5>
+                        <ul className="text-white/80 text-sm space-y-1">
+                          <li>• <strong>Tekilleştirme:</strong> Shared utilities, unified API client</li>
+                          <li>• <strong>Entegrasyon:</strong> Frontend↔Backend tam entegrasyon</li>
+                          <li>• <strong>Optimizasyon:</strong> Performance monitoring, caching</li>
+                          <li>• <strong>CI/CD:</strong> Makefile workflow, Docker optimization</li>
+                          <li>• <strong>Dokümantasyon:</strong> Kapsamlı kaynak haritası</li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
                   
-                  <div className="space-y-3">
-                    <Button variant="outline" className="w-full justify-start">
-                      <Icons.FileText className="w-4 h-4 mr-2" />
-                      Tam Kurulum Kılavuzunu Aç (install_document.md)
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <Button variant="outline" className="justify-start">
+                      <div className="flex items-center">
+                        <Icons.FileText className="w-4 h-4 mr-2" />
+                        <span className="truncate">Tam Kurulum Kılavuzu</span>
+                      </div>
                     </Button>
-                    <Button variant="outline" className="w-full justify-start">
-                      <Icons.Download className="w-4 h-4 mr-2" />
-                      Dokümantasyonu PDF Olarak İndir
+                    <Button variant="outline" className="justify-start">
+                      <div className="flex items-center">
+                        <Icons.GitBranch className="w-4 h-4 mr-2" />
+                        <span className="truncate">Sistem Mimarisi</span>
+                      </div>
+                    </Button>
+                    <Button variant="outline" className="justify-start">
+                      <div className="flex items-center">
+                        <Icons.Code className="w-4 h-4 mr-2" />
+                        <span className="truncate">API Referansı</span>
+                      </div>
                     </Button>
                   </div>
                 </div>
               </Card>
 
-              {/* Quick Links */}
-              <Card title="Hızlı Erişim ve Kaynaklar">
+              {/* Quick Commands */}
+              <Card title="Hızlı Komutlar ve Workflow">
+                <div className="space-y-4">
+                  <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+                    <h5 className="text-blue-400 font-medium mb-3">Development Workflow</h5>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <h6 className="text-white font-medium text-sm mb-2">Kurulum</h6>
+                        <code className="block bg-black/40 p-3 rounded text-sm text-emerald-400 font-mono">
+                          make quick-start
+                        </code>
+                      </div>
+                      <div>
+                        <h6 className="text-white font-medium text-sm mb-2">Geliştirme</h6>
+                        <code className="block bg-black/40 p-3 rounded text-sm text-emerald-400 font-mono">
+                          make dev
+                        </code>
+                      </div>
+                      <div>
+                        <h6 className="text-white font-medium text-sm mb-2">Test</h6>
+                        <code className="block bg-black/40 p-3 rounded text-sm text-emerald-400 font-mono">
+                          make test
+                        </code>
+                      </div>
+                      <div>
+                        <h6 className="text-white font-medium text-sm mb-2">Deploy</h6>
+                        <code className="block bg-black/40 p-3 rounded text-sm text-emerald-400 font-mono">
+                          make deploy-prod
+                        </code>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-4">
+                    <h5 className="text-purple-400 font-medium mb-3">Sistem Yönetimi</h5>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-white/60">Health Check:</span>
+                        <code className="text-emerald-400 font-mono">make health</code>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-white/60">Backup:</span>
+                        <code className="text-emerald-400 font-mono">make backup</code>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-white/60">Clean:</span>
+                        <code className="text-emerald-400 font-mono">make clean</code>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-white/60">Logs:</span>
+                        <code className="text-emerald-400 font-mono">make logs</code>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Environment Variables */}
+              <Card title="Environment Variables Rehberi">
+                <div className="space-y-4">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-white/10">
+                          <th className="text-left py-2 text-white/80">Anahtar</th>
+                          <th className="text-left py-2 text-white/80">Açıklama</th>
+                          <th className="text-left py-2 text-white/80">Varsayılan</th>
+                          <th className="text-left py-2 text-white/80">Gerekli</th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-white/90 text-xs">
+                        <tr className="border-b border-white/5">
+                          <td className="py-2 font-mono">DATABASE_URL</td>
+                          <td className="py-2">PostgreSQL bağlantı string'i</td>
+                          <td className="py-2 text-white/60">-</td>
+                          <td className="py-2 text-emerald-400">✅</td>
+                        </tr>
+                        <tr className="border-b border-white/5">
+                          <td className="py-2 font-mono">SUPABASE_URL</td>
+                          <td className="py-2">Supabase proje URL'si</td>
+                          <td className="py-2 text-white/60">-</td>
+                          <td className="py-2 text-emerald-400">✅</td>
+                        </tr>
+                        <tr className="border-b border-white/5">
+                          <td className="py-2 font-mono">JWT_SECRET</td>
+                          <td className="py-2">JWT imzalama anahtarı</td>
+                          <td className="py-2 text-white/60">-</td>
+                          <td className="py-2 text-emerald-400">✅</td>
+                        </tr>
+                        <tr className="border-b border-white/5">
+                          <td className="py-2 font-mono">GRAFANA_PASSWORD</td>
+                          <td className="py-2">Grafana admin şifresi</td>
+                          <td className="py-2 text-white/60">admin</td>
+                          <td className="py-2 text-orange-400">⚠️</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </Card>
+
+              {/* System Architecture */}
+              <Card title="Sistem Mimarisi Özeti">
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                      <h6 className="text-blue-400 font-medium mb-2">Frontend Stack</h6>
+                      <ul className="text-white/80 text-sm space-y-1">
+                        <li>• React 18.3.1 + TypeScript</li>
+                        <li>• Tailwind CSS + Framer Motion</li>
+                        <li>• React Query + Zustand</li>
+                        <li>• Vite build system</li>
+                      </ul>
+                    </div>
+                    <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+                      <h6 className="text-emerald-400 font-medium mb-2">Backend Stack</h6>
+                      <ul className="text-white/80 text-sm space-y-1">
+                        <li>• Node.js + Express mikroservisler</li>
+                        <li>• PostgreSQL + Redis</li>
+                        <li>• Supabase real-time</li>
+                        <li>• Docker containerization</li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 bg-orange-500/10 border border-orange-500/20 rounded-lg">
+                    <h6 className="text-orange-400 font-medium mb-2">Tekilleştirme Sonuçları</h6>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="text-white/60">Önceki Durum:</span>
+                        <ul className="text-white/80 mt-1 space-y-1">
+                          <li>• 5 farklı logger</li>
+                          <li>• 4 database service</li>
+                          <li>• 3 HTTP client</li>
+                          <li>• Dağınık environment</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <span className="text-white/60">Optimize Edilmiş:</span>
+                        <ul className="text-emerald-400 mt-1 space-y-1">
+                          <li>• ✅ Tek UnifiedLogger</li>
+                          <li>• ✅ Tek DatabaseManager</li>
+                          <li>• ✅ Tek UnifiedApiClient</li>
+                          <li>• ✅ Merkezi configuration</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Quick Links - Updated */}
+              <Card title="Hızlı Erişim ve Yeni Kaynaklar">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <Button variant="outline" className="justify-start">
                     <div className="flex items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" 
-                           width="24" height="24" viewBox="0 0 24 24" 
-                           fill="none" stroke="currentColor" strokeWidth="2" 
-                           strokeLinecap="round" strokeLinejoin="round" 
-                           className="lucide lucide-external-link w-4 h-4 mr-2">
-                        <path d="M15 3h6v6"/>
-                        <path d="M10 14 21 3"/>
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                      </svg>
-                      <span className="truncate">Teknik Spesifikasyonlar</span>
+                      <Icons.FileText className="w-4 h-4 mr-2" />
+                      <span className="truncate">Kapsamlı Dokümantasyon</span>
                     </div>
                   </Button>
                   <Button variant="outline" className="justify-start">
                     <div className="flex items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" 
-                           width="24" height="24" viewBox="0 0 24 24" 
-                           fill="none" stroke="currentColor" strokeWidth="2" 
-                           strokeLinecap="round" strokeLinejoin="round" 
-                           className="lucide lucide-wrench w-4 h-4 mr-2">
-                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-                      </svg>
-                      <span className="truncate">WireGuard Kılavuzu</span>
+                      <Icons.Zap className="w-4 h-4 mr-2" />
+                      <span className="truncate">Hızlı Kurulum</span>
                     </div>
                   </Button>
                   <Button variant="outline" className="justify-start">
                     <div className="flex items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" 
-                           width="24" height="24" viewBox="0 0 24 24" 
-                           fill="none" stroke="currentColor" strokeWidth="2" 
-                           strokeLinecap="round" strokeLinejoin="round" 
-                           className="lucide lucide-code w-4 h-4 mr-2">
-                        <polyline points="16,18 22,12 16,6"/>
-                        <polyline points="8,6 2,12 8,18"/>
-                      </svg>
-                      <span className="truncate">Yapılandırma Planı</span>
+                      <Icons.Map className="w-4 h-4 mr-2" />
+                      <span className="truncate">Kaynak Haritası</span>
                     </div>
                   </Button>
                   <Button variant="outline" className="justify-start">
                     <div className="flex items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" 
-                           width="24" height="24" viewBox="0 0 24 24" 
-                           fill="none" stroke="currentColor" strokeWidth="2" 
-                           strokeLinecap="round" strokeLinejoin="round" 
-                           className="lucide lucide-layers w-4 h-4 mr-2">
-                        <path d="M2 12h20l-10-5z"/>
-                        <path d="M2 17h20l-10-5z"/>
-                        <path d="M2 22h20l-10-5z"/>
-                      </svg>
-                      <span className="truncate">Uygulama Kılavuzu</span>
+                      <Icons.Terminal className="w-4 h-4 mr-2" />
+                      <span className="truncate">Makefile Commands</span>
                     </div>
                   </Button>
                 </div>
