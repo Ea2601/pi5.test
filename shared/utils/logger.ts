@@ -25,7 +25,6 @@ export class UnifiedLogger {
     return new Logger(serviceName);
   }
 
-  // Convenience methods for common logging patterns
   static logApiRequest(serviceName: string, method: string, path: string, context?: LogContext) {
     const logger = UnifiedLogger.getInstance(serviceName);
     logger.info(`API Request: ${method} ${path}`, context);
