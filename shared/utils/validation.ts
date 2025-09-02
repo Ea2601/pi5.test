@@ -52,69 +52,6 @@ export class UnifiedValidator {
       device_type: UnifiedValidator.schemas.deviceType,
       device_brand: Joi.string().max(100).optional(),
       is_active: Joi.boolean().default(true)
-    }),
-
-    // DHCP schemas
-    dhcpPool: Joi.object({
-      name: Joi.string().min(1).max(100).required(),
-      vlan_id: UnifiedValidator.schemas.vlanId,
-      network_cidr: UnifiedValidator.schemas.cidr,
-      start_ip: UnifiedValidator.schemas.ipAddress,
-      end_ip: UnifiedValidator.schemas.ipAddress,
-      gateway_ip: UnifiedValidator.schemas.ipAddress,
-      dns_servers: Joi.array().items(UnifiedValidator.schemas.ipAddress).min(1).required(),
-      lease_time: Joi.string().pattern(/^\d+\s+(hours?|days?)$/).required(),
-      is_active: Joi.boolean().default(true)
-    }),
-
-    dhcpReservation: Joi.object({
-      mac_address: UnifiedValidator.schemas.macAddress,
-      ip_address: UnifiedValidator.schemas.ipAddress,
-      hostname: UnifiedValidator.schemas.hostname.optional(),
-      is_active: Joi.boolean().default(true)
-    }),
-
-    // DNS schemas
-    dnsServer: Joi.object({
-      name: Joi.string().min(1).max(100).required(),
-      ip_address: UnifiedValidator.schemas.ipAddress,
-      port: UnifiedValidator.schemas.port.default(53),
-      type: Joi.string().valid('standard', 'doh', 'dot', 'dnssec').default('standard'),
-      is_active: Joi.boolean().default(true)
-    }),
-
-    // Wi-Fi schemas
-    wifiNetwork: Joi.object({
-      ssid: Joi.string().min(1).max(32).required(),
-      vlan_id: UnifiedValidator.schemas.vlanId.optional(),
-      encryption_type: Joi.string().valid('open', 'wpa2', 'wpa3', 'wpa2_enterprise', 'wpa3_enterprise').default('wpa3'),
-      passphrase: Joi.string().min(8).max(63).when('encryption_type', {
-        is: 'open',
-        then: Joi.optional(),
-        otherwise: Joi.required()
-      }),
-      frequency_band: Joi.string().valid('2.4ghz', '5ghz', '6ghz').required(),
-      max_clients: Joi.number().integer().min(1).max(200).default(50),
-      is_enabled: Joi.boolean().default(true)
-    }),
-
-    // VPN schemas
-    wireGuardServer: Joi.object({
-      name: Joi.string().min(1).max(100).required(),
-      interface_name: Joi.string().pattern(/^wg\d+$/).required(),
-      listen_port: UnifiedValidator.schemas.port,
-      network_cidr: UnifiedValidator.schemas.cidr,
-      endpoint: Joi.string().pattern(/^.+:\d+$/).optional(),
-      max_clients: Joi.number().integer().min(1).max(1000).default(100),
-      dns_servers: Joi.array().items(UnifiedValidator.schemas.ipAddress).min(1).required()
-    }),
-
-    wireGuardClient: Joi.object({
-      name: Joi.string().min(1).max(100).required(),
-      server_id: Joi.string().uuid().required(),
-      allowed_ips: Joi.string().default('0.0.0.0/0'),
-      persistent_keepalive: Joi.number().integer().min(0).max(3600).default(25),
-      is_enabled: Joi.boolean().default(true)
     })
   };
 
@@ -176,61 +113,6 @@ export class UnifiedValidator {
     return UnifiedValidator.validate(data, UnifiedValidator.schemas.networkDevice);
   }
 
-  // Validate DHCP pool
-  static validateDHCPPool(data: any): ValidationResult {
-    const result = UnifiedValidator.validate(data, UnifiedValidator.schemas.dhcpPool);
-    
-    // Additional business logic validation
-    if (result.valid && data.start_ip && data.end_ip) {
-      const startNum = UnifiedValidator.ipToNumber(data.start_ip);
-      const endNum = UnifiedValidator.ipToNumber(data.end_ip);
-      
-      if (startNum >= endNum) {
-        result.valid = false;
-        result.errors.push({
-          field: 'ip_range',
-          message: 'Start IP must be less than end IP',
-          code: 'INVALID_IP_RANGE'
-        });
-      }
-    }
-
-    return result;
-  }
-
-  // Validate Wi-Fi network
-  static validateWiFiNetwork(data: any): ValidationResult {
-    const result = UnifiedValidator.validate(data, UnifiedValidator.schemas.wifiNetwork);
-    
-    // Additional Wi-Fi specific validation
-    if (result.valid) {
-      // Check SSID uniqueness would be done at service level
-      if (data.channel && data.frequency_band === '2.4ghz' && (data.channel < 1 || data.channel > 13)) {
-        result.warnings.push({
-          field: 'channel',
-          message: 'Channel not optimal for 2.4GHz band',
-          code: 'SUBOPTIMAL_CHANNEL'
-        });
-      }
-    }
-
-    return result;
-  }
-
-  // Validate WireGuard configuration
-  static validateWireGuardServer(data: any): ValidationResult {
-    return UnifiedValidator.validate(data, UnifiedValidator.schemas.wireGuardServer);
-  }
-
-  static validateWireGuardClient(data: any): ValidationResult {
-    return UnifiedValidator.validate(data, UnifiedValidator.schemas.wireGuardClient);
-  }
-
-  // Utility methods
-  private static ipToNumber(ip: string): number {
-    return ip.split('.').reduce((acc, octet) => (acc << 8) + parseInt(octet), 0) >>> 0;
-  }
-
   // Sanitization methods
   static sanitize = {
     macAddress: (mac: string): string => {
@@ -248,10 +130,6 @@ export class UnifiedValidator {
     
     deviceName: (name: string): string => {
       return name.replace(/[<>'"]/g, '').slice(0, 255);
-    },
-    
-    ssid: (ssid: string): string => {
-      return ssid.replace(/[^\x20-\x7E]/g, '').slice(0, 32);
     }
   };
 }

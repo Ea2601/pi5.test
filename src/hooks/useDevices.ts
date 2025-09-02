@@ -3,6 +3,10 @@
 +import { unifiedApiClient } from '../services/unifiedApiClient';
 +import { NetworkAPI } from '../../shared/types/api';
  import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { validator } from '../../shared/utils/validation';
+import { UnifiedLogger } from '../../shared/utils/logger';
+
+const logger = UnifiedLogger.getInstance('devices-hook');
 +import { validator } from '../../shared/utils/validation';
 +import { UnifiedLogger } from '../../shared/utils/logger';
 
@@ -52,6 +56,16 @@
    
    return useMutation({
 -    mutationFn: createDevice,
+    mutationFn: async (deviceData: any) => {
+      // Validate input
+      const validation = validator.validateNetworkDevice(deviceData);
+      if (!validation.valid) {
+        const errorMessage = validation.errors.map(e => e.message).join(', ');
+        throw new Error(`Validation failed: ${errorMessage}`);
+      }
+
+      return unifiedApiClient.createDevice(deviceData);
+    },
 +    mutationFn: async (deviceData: NetworkAPI.DeviceInput) => {
 +      // Validate input
 +      const validation = validator.validateNetworkDevice(deviceData);
@@ -68,6 +82,7 @@
      },
      onError: (error) => {
 -      console.error('Create device error:', error);
+      logger.error('Failed to create device', { error: (error as Error).message });
 +      logger.error('Failed to create device', { error: (error as Error).message });
      }
    });
@@ -79,6 +94,9 @@
    return useMutation({
 -    mutationFn: ({ macAddress, updates }: { macAddress: string; updates: any }) => 
 -      updateDevice(macAddress, updates),
+    mutationFn: ({ macAddress, updates }: { macAddress: string; updates: any }) => {
+      return unifiedApiClient.updateDevice(macAddress, updates);
+    },
 +    mutationFn: ({ macAddress, updates }: { macAddress: string; updates: NetworkAPI.DeviceUpdate }) => {
 +      return unifiedApiClient.updateDevice(macAddress, updates);
 +    },
@@ -89,6 +107,7 @@
      },
      onError: (error) => {
 -      console.error('Update device error:', error);
+      logger.error('Failed to update device', { error: (error as Error).message });
 +      logger.error('Failed to update device', { error: (error as Error).message });
      }
    });
@@ -106,6 +125,7 @@
      },
      onError: (error) => {
 -      console.error('Delete device error:', error);
+      logger.error('Failed to delete device', { error: (error as Error).message });
 +      logger.error('Failed to delete device', { error: (error as Error).message });
      }
    });

@@ -15,11 +15,11 @@ export class DatabaseManager {
   }
 
   private static createClient(): SupabaseClient {
-    if (!config.SUPABASE_URL || !config.SUPABASE_KEY) {
+    if (!config.SUPABASE_URL || !config.SUPABASE_ANON_KEY) {
       throw new Error('Supabase configuration missing: URL or KEY not provided');
     }
 
-    const supabase = createClient(config.SUPABASE_URL, config.SUPABASE_KEY, {
+    const supabase = createClient(config.SUPABASE_URL, config.SUPABASE_ANON_KEY, {
       auth: {
         autoRefreshToken: true,
         persistSession: true,
@@ -51,7 +51,6 @@ export class DatabaseManager {
     context?: { service?: string; userId?: string }
   ): Promise<{ data: T[] | T | null; error: any; count?: number }> {
     const startTime = Date.now();
-    const supabase = DatabaseManager.getInstance();
     
     try {
       let result;
@@ -149,44 +148,6 @@ export class DatabaseManager {
       .subscribe();
 
     return subscription;
-  }
-
-  // Transaction support
-  static async transaction<T>(
-    operations: Array<(client: SupabaseClient) => Promise<any>>,
-    context?: { service?: string; userId?: string }
-  ): Promise<T[]> {
-    const supabase = DatabaseManager.getInstance();
-    const startTime = Date.now();
-
-    try {
-      // Note: Supabase doesn't have native transactions, so we'll use RPC
-      const results: T[] = [];
-      
-      for (const operation of operations) {
-        const result = await operation(supabase);
-        results.push(result);
-      }
-
-      const duration = Date.now() - startTime;
-      DatabaseManager.logger.info('Transaction completed', {
-        operations: operations.length,
-        duration,
-        ...context
-      });
-
-      return results;
-    } catch (error) {
-      const duration = Date.now() - startTime;
-      UnifiedLogger.logError(context?.service || 'database', error as Error, {
-        operation: 'transaction',
-        operationCount: operations.length,
-        duration,
-        ...context
-      });
-
-      throw error;
-    }
   }
 
   // Health check
