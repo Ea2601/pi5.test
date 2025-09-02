@@ -40,7 +40,7 @@ class Pi5SupernodeAPIClient extends UnifiedApiClient {
   constructor() {
     super('frontend');
     // Override base URL for frontend to use relative paths with Vite proxy
-    this.axiosInstance.defaults.baseURL = '/';
+    this.client.defaults.baseURL = '/';
   }
 
   // Network Device Management
