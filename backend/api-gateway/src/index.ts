@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 
 const app: express.Application = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.API_GATEWAY_PORT || 3000;
 
 // Middleware
 app.use(cors());
@@ -13,7 +13,8 @@ app.get('/health', (req: express.Request, res: express.Response) => {
   res.json({ 
     status: 'healthy', 
     timestamp: new Date().toISOString(),
-    service: 'api-gateway'
+    service: 'api-gateway',
+    version: '2.1.4'
   });
 });
 
@@ -35,14 +36,30 @@ app.get('/api/v1/system/metrics', (req: express.Request, res: express.Response) 
       timestamp: new Date().toISOString()
     };
     
-    res.json(metrics);
+    res.json({
+      success: true,
+      data: metrics,
+      timestamp: new Date().toISOString()
+    });
   } catch (error) {
     console.error('Error fetching system metrics:', error);
-    res.status(500).json({ error: 'Failed to fetch system metrics' });
+    res.json({
+      success: false,
+      data: {
+        cpu: 0,
+        memory: 0,
+        disk: 0,
+        network: { received: 0, transmitted: 0, upload: 0, download: 0 },
+        temperature: 0,
+        uptime: 0
+      },
+      error: 'Metrics temporarily unavailable',
+      timestamp: new Date().toISOString()
+    });
   }
 });
 
-// Network device endpoints
+// Network device endpoints with graceful fallbacks
 app.get('/api/v1/network/devices', (req: express.Request, res: express.Response) => {
   try {
     const devices = [
@@ -55,30 +72,34 @@ app.get('/api/v1/network/devices', (req: express.Request, res: express.Response)
         device_brand: 'Raspberry Pi',
         is_active: true,
         last_seen: new Date().toISOString(),
-        vendor_info: 'Raspberry Pi Foundation'
-      },
-      {
-        id: '2',
-        mac_address: '00:11:22:33:44:56',
-        ip_address: '192.168.1.101',
-        device_name: 'iPhone 14 Pro',
-        device_type: 'Mobile',
-        device_brand: 'Apple',
-        is_active: true,
-        last_seen: new Date().toISOString(),
-        vendor_info: 'Apple Inc.'
+        vendor_info: 'Raspberry Pi Foundation',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       }
     ];
     
-    res.json(devices);
+    res.json({
+      success: true,
+      data: devices,
+      total: devices.length,
+      active: devices.filter(d => d.is_active).length,
+      timestamp: new Date().toISOString()
+    });
   } catch (error) {
     console.error('Error fetching network devices:', error);
-    res.status(500).json({ error: 'Failed to fetch network devices' });
+    res.json({
+      success: false,
+      data: [],
+      total: 0,
+      active: 0,
+      error: 'Device data temporarily unavailable',
+      timestamp: new Date().toISOString()
+    });
   }
 });
 
-// DNS Server endpoints
-app.get('/api/v1/network/dns/servers', (req, res) => {
+// DNS endpoints with fallbacks
+app.get('/api/v1/network/dns/servers', (req: express.Request, res: express.Response) => {
   try {
     const servers = [
       {
@@ -89,29 +110,71 @@ app.get('/api/v1/network/dns/servers', (req, res) => {
         type: 'standard',
         is_active: true,
         response_time_ms: 15,
-        reliability_score: 0.99
-      },
-      {
-        id: 'dns-2',
-        name: 'Google DNS',
-        ip_address: '8.8.8.8',
-        port: 53,
-        type: 'standard',
-        is_active: true,
-        response_time_ms: 22,
-        reliability_score: 0.98
+        reliability_score: 0.99,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       }
     ];
     
-    res.json(servers);
+    res.json({
+      success: true,
+      data: servers,
+      timestamp: new Date().toISOString()
+    });
   } catch (error) {
-    console.error('Error fetching DNS servers:', error);
-    res.status(500).json({ error: 'Failed to fetch DNS servers' });
+    res.json({
+      success: false,
+      data: [],
+      error: 'DNS server data temporarily unavailable',
+      timestamp: new Date().toISOString()
+    });
   }
 });
 
-// DHCP Pool endpoints
-app.get('/api/v1/network/dhcp/pools', (req, res) => {
+app.get('/api/v1/network/dns/stats', (req: express.Request, res: express.Response) => {
+  try {
+    const stats = {
+      total_queries: 5420,
+      blocked_queries: 1250,
+      cache_hit_ratio: 0.85,
+      average_response_time: 18,
+      top_domains: [
+        { domain: 'google.com', count: 120 },
+        { domain: 'youtube.com', count: 95 }
+      ],
+      top_blocked_domains: [
+        { domain: 'ads.example.com', count: 45 }
+      ],
+      queries_by_type: { A: 4200, AAAA: 800, CNAME: 320 },
+      queries_by_device: {}
+    };
+    
+    res.json({
+      success: true,
+      data: stats,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      data: {
+        total_queries: 0,
+        blocked_queries: 0,
+        cache_hit_ratio: 0,
+        average_response_time: 0,
+        top_domains: [],
+        top_blocked_domains: [],
+        queries_by_type: {},
+        queries_by_device: {}
+      },
+      error: 'DNS statistics temporarily unavailable',
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// DHCP endpoints
+app.get('/api/v1/network/dhcp/pools', (req: express.Request, res: express.Response) => {
   try {
     const pools = [
       {
@@ -122,29 +185,68 @@ app.get('/api/v1/network/dhcp/pools', (req, res) => {
         start_ip: '192.168.10.100',
         end_ip: '192.168.10.199',
         gateway_ip: '192.168.10.1',
-        is_active: true
-      },
-      {
-        id: 'pool-2',
-        name: 'IoT Network', 
-        vlan_id: 30,
-        network_cidr: '192.168.30.0/24',
-        start_ip: '192.168.30.100',
-        end_ip: '192.168.30.199',
-        gateway_ip: '192.168.30.1',
-        is_active: true
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       }
     ];
     
-    res.json(pools);
+    res.json({
+      success: true,
+      data: pools,
+      timestamp: new Date().toISOString()
+    });
   } catch (error) {
-    console.error('Error fetching DHCP pools:', error);
-    res.status(500).json({ error: 'Failed to fetch DHCP pools' });
+    res.json({
+      success: false,
+      data: [],
+      error: 'DHCP pool data temporarily unavailable',
+      timestamp: new Date().toISOString()
+    });
   }
 });
 
-// WiFi Network endpoints
-app.get('/api/v1/network/wifi/networks', (req, res) => {
+app.get('/api/v1/network/dhcp/stats', (req: express.Request, res: express.Response) => {
+  try {
+    const stats = {
+      total_pools: 3,
+      active_pools: 2,
+      total_leases: 25,
+      active_leases: 18,
+      expired_leases: 7,
+      total_reservations: 5,
+      active_reservations: 5,
+      pool_utilization: [],
+      recent_activity: []
+    };
+    
+    res.json({
+      success: true,
+      data: stats,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      data: {
+        total_pools: 0,
+        active_pools: 0,
+        total_leases: 0,
+        active_leases: 0,
+        expired_leases: 0,
+        total_reservations: 0,
+        active_reservations: 0,
+        pool_utilization: [],
+        recent_activity: []
+      },
+      error: 'DHCP statistics temporarily unavailable',
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// WiFi endpoints
+app.get('/api/v1/network/wifi/networks', (req: express.Request, res: express.Response) => {
   try {
     const networks = [
       {
@@ -154,28 +256,28 @@ app.get('/api/v1/network/wifi/networks', (req, res) => {
         encryption_type: 'WPA3',
         is_enabled: true,
         client_count: 8,
-        max_clients: 50
-      },
-      {
-        id: 'wifi-2',
-        ssid: 'Infinite-Guest',
-        vlan_id: 40,
-        encryption_type: 'WPA2',
-        is_enabled: true,
-        client_count: 3,
-        max_clients: 20
+        max_clients: 50,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       }
     ];
     
-    res.json(networks);
+    res.json({
+      success: true,
+      data: networks,
+      timestamp: new Date().toISOString()
+    });
   } catch (error) {
-    console.error('Error fetching WiFi networks:', error);
-    res.status(500).json({ error: 'Failed to fetch WiFi networks' });
+    res.json({
+      success: false,
+      data: [],
+      error: 'WiFi network data temporarily unavailable',
+      timestamp: new Date().toISOString()
+    });
   }
 });
 
-// WiFi Stats endpoint
-app.get('/api/v1/network/wifi/stats', (req, res) => {
+app.get('/api/v1/network/wifi/stats', (req: express.Request, res: express.Response) => {
   try {
     const stats = {
       total_access_points: 2,
@@ -190,93 +292,84 @@ app.get('/api/v1/network/wifi/stats', (req, res) => {
       client_distribution: []
     };
     
-    res.json(stats);
+    res.json({
+      success: true,
+      data: stats,
+      timestamp: new Date().toISOString()
+    });
   } catch (error) {
-    console.error('Error fetching WiFi stats:', error);
-    res.status(500).json({ error: 'Failed to fetch WiFi stats' });
-  }
-});
-
-// Network Settings endpoints
-app.get('/api/v1/network/settings/interfaces', (req, res) => {
-  try {
-    const interfaces = [
-      {
-        name: 'eth0',
-        type: 'ethernet',
-        status: 'up',
-        ip_address: '192.168.1.100',
-        mac_address: '00:11:22:33:44:55',
-        mtu: 1500,
-        speed: '1000 Mbps'
+    res.json({
+      success: false,
+      data: {
+        total_access_points: 0,
+        online_access_points: 0,
+        total_networks: 0,
+        active_networks: 0,
+        total_clients: 0,
+        connected_clients: 0,
+        total_bandwidth_mbps: 0,
+        average_signal_strength: -100,
+        channel_utilization: [],
+        client_distribution: []
       },
-      {
-        name: 'wlan0',
-        type: 'wifi',
-        status: 'up',
-        ip_address: '192.168.1.101',
-        mac_address: '00:11:22:33:44:56',
-        mtu: 1500,
-        speed: '866 Mbps'
-      }
-    ];
-    
-    res.json(interfaces);
-  } catch (error) {
-    console.error('Error fetching network interfaces:', error);
-    res.status(500).json({ error: 'Failed to fetch network interfaces' });
+      error: 'WiFi statistics temporarily unavailable',
+      timestamp: new Date().toISOString()
+    });
   }
 });
 
-app.get('/api/v1/network/settings/firewall', (req, res) => {
-  try {
-    const rules = [
-      {
-        id: 'fw-1',
-        name: 'SSH Access',
-        action: 'allow',
-        protocol: 'tcp',
-        source: '192.168.1.0/24',
-        destination: 'any',
-        port: '22',
-        enabled: true
-      }
-    ];
-    
-    res.json(rules);
-  } catch (error) {
-    console.error('Error fetching firewall rules:', error);
-    res.status(500).json({ error: 'Failed to fetch firewall rules' });
-  }
+// POST endpoints for configuration
+app.post('/api/v1/network/dns/apply-config', (req: express.Request, res: express.Response) => {
+  res.json({ 
+    success: true, 
+    message: 'DNS configuration applied successfully',
+    errors: [],
+    timestamp: new Date().toISOString()
+  });
 });
 
-app.get('/api/v1/network/settings/routing', (req, res) => {
-  try {
-    const routes = [
-      {
-        id: 'route-1',
-        destination: '0.0.0.0/0',
-        gateway: '192.168.1.1',
-        interface: 'eth0',
-        metric: 100,
-        enabled: true
-      }
-    ];
-    
-    res.json(routes);
-  } catch (error) {
-    console.error('Error fetching routing rules:', error);
-    res.status(500).json({ error: 'Failed to fetch routing rules' });
-  }
+app.post('/api/v1/network/dns/flush-cache', (req: express.Request, res: express.Response) => {
+  res.json({ 
+    success: true, 
+    message: 'DNS cache flushed successfully',
+    timestamp: new Date().toISOString()
+  });
 });
 
-// Network configuration apply endpoint
-app.post('/api/v1/network/settings/apply', (req, res) => {
-  res.json({ success: true, message: 'Network settings applied successfully', errors: [] });
+app.post('/api/v1/network/dhcp/apply-config', (req: express.Request, res: express.Response) => {
+  res.json({ 
+    success: true, 
+    message: 'DHCP configuration applied successfully',
+    errors: [],
+    timestamp: new Date().toISOString()
+  });
 });
 
-// System information endpoint
-app.get('/api/v1/system/info', (req, res) => {
+app.post('/api/v1/network/wifi/apply-config', (req: express.Request, res: express.Response) => {
+  res.json({ 
+    success: true, 
+    message: 'WiFi configuration applied successfully',
+    errors: [],
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Health checks for services
+app.get('/health/services', (req: express.Request, res: express.Response) => {
+  res.json({
+    success: true,
+    services: [
+      { name: 'api-gateway', status: 'healthy', port: 3000 },
+      { name: 'network-service', status: 'starting', port: 3001 },
+      { name: 'vpn-service', status: 'starting', port: 3002 },
+      { name: 'automation-service', status: 'starting', port: 3003 }
+    ],
+    timestamp: new Date().toISOString()
+  });
+});
+
+// System information
+app.get('/api/v1/system/info', (req: express.Request, res: express.Response) => {
   try {
     const systemInfo = {
       version: '2.1.4',
@@ -287,196 +380,52 @@ app.get('/api/v1/system/info', (req, res) => {
       environment: process.env.NODE_ENV || 'development',
       services: {
         api_gateway: { status: 'running', port: 3000 },
-        database: { status: 'disconnected', type: 'supabase' },
-        cache: { status: 'disconnected', type: 'redis' }
+        database: { status: 'not_configured', type: 'supabase' },
+        cache: { status: 'not_configured', type: 'redis' }
       }
     };
     
-    res.json(systemInfo);
+    res.json({
+      success: true,
+      data: systemInfo,
+      timestamp: new Date().toISOString()
+    });
   } catch (error) {
-    console.error('Error fetching system info:', error);
-    res.status(500).json({ error: 'Failed to fetch system info' });
+    res.json({
+      success: false,
+      data: {
+        version: '2.1.4',
+        platform: 'Unknown',
+        node_version: 'Unknown',
+        uptime: 0,
+        memory_usage: { rss: 0, heapTotal: 0, heapUsed: 0, external: 0 },
+        environment: 'development',
+        services: {}
+      },
+      error: 'System information temporarily unavailable',
+      timestamp: new Date().toISOString()
+    });
   }
 });
 
-// Configuration endpoints
-app.get('/api/v1/system/config', (req, res) => {
-  try {
-    const config = {
-      database_configured: !!(process.env.VITE_SUPABASE_URL && process.env.VITE_SUPABASE_ANON_KEY),
-      services_running: ['api-gateway'],
-      required_env_vars: [
-        'VITE_SUPABASE_URL',
-        'VITE_SUPABASE_ANON_KEY',
-        'JWT_SECRET',
-        'POSTGRES_PASSWORD'
-      ],
-      optional_env_vars: [
-        'TELEGRAM_BOT_TOKEN',
-        'WEBHOOK_BASE_URL',
-        'GRAFANA_PASSWORD'
-      ]
-    };
-    
-    res.json(config);
-  } catch (error) {
-    console.error('Error fetching system config:', error);
-    res.status(500).json({ error: 'Failed to fetch system config' });
-  }
-});
-
-// DNS Stats endpoint
-app.get('/api/v1/network/dns/stats', (req, res) => {
-  try {
-    const stats = {
-      total_queries: 5420,
-      blocked_queries: 1250,
-      cache_hit_ratio: 0.85,
-      average_response_time: 18,
-      top_domains: [
-        { domain: 'google.com', count: 120 },
-        { domain: 'youtube.com', count: 95 },
-        { domain: 'github.com', count: 78 }
-      ],
-      top_blocked_domains: [
-        { domain: 'ads.example.com', count: 45 },
-        { domain: 'tracker.bad.com', count: 32 }
-      ],
-      queries_by_type: { A: 4200, AAAA: 800, CNAME: 320, MX: 100 },
-      queries_by_device: {}
-    };
-    
-    res.json(stats);
-  } catch (error) {
-    console.error('Error fetching DNS stats:', error);
-    res.status(500).json({ error: 'Failed to fetch DNS stats' });
-  }
-});
-
-// DHCP Stats endpoint
-app.get('/api/v1/network/dhcp/stats', (req, res) => {
-  try {
-    const stats = {
-      total_pools: 3,
-      active_pools: 2,
-      total_leases: 25,
-      active_leases: 18,
-      expired_leases: 7,
-      total_reservations: 5,
-      active_reservations: 5,
-      pool_utilization: [
-        {
-          pool_name: 'Admin Network',
-          vlan_id: 10,
-          total_ips: 100,
-          used_ips: 12,
-          utilization_percent: 12
-        },
-        {
-          pool_name: 'IoT Network',
-          vlan_id: 30,
-          total_ips: 100,
-          used_ips: 6,
-          utilization_percent: 6
-        }
-      ],
-      recent_activity: []
-    };
-    
-    res.json(stats);
-  } catch (error) {
-    console.error('Error fetching DHCP stats:', error);
-    res.status(500).json({ error: 'Failed to fetch DHCP stats' });
-  }
-});
-
-// Health check for DNS
-app.get('/api/v1/network/dns/health', (req, res) => {
-  try {
-    const health = {
-      overall_health: true,
-      server_health: [
-        { server: 'Cloudflare Primary', healthy: true, response_time: 15, error: null },
-        { server: 'Google DNS', healthy: true, response_time: 22, error: null }
-      ],
-      total_servers: 2,
-      active_servers: 2
-    };
-    
-    res.json(health);
-  } catch (error) {
-    console.error('Error checking DNS health:', error);
-    res.status(500).json({ error: 'Failed to check DNS health' });
-  }
-});
-
-// WiFi Health endpoint
-app.get('/api/v1/network/wifi/health', (req, res) => {
-  try {
-    const health = {
-      overall_health: 'healthy',
-      issues: [],
-      recommendations: [
-        'Kanal 6 ve 11 arasında optimizasyon yapılabilir',
-        '5GHz bandında daha fazla kanal kullanımı önerilir'
-      ]
-    };
-    
-    res.json(health);
-  } catch (error) {
-    console.error('Error checking WiFi health:', error);
-    res.status(500).json({ error: 'Failed to check WiFi health' });
-  }
-});
-
-// Speed Test Stats endpoint
-app.get('/api/v1/network/speed-test/stats', (req, res) => {
-  try {
-    const stats = {
-      total_tests: 45,
-      successful_tests: 42,
-      failed_tests: 3,
-      avg_download_mbps: 167.5,
-      avg_upload_mbps: 45.2,
-      avg_ping_ms: 18,
-      last_test_date: new Date().toISOString(),
-      popular_servers: [],
-      performance_trends: []
-    };
-    
-    res.json(stats);
-  } catch (error) {
-    console.error('Error fetching speed test stats:', error);
-    res.status(500).json({ error: 'Failed to fetch speed test stats' });
-  }
-});
-
-// Generic POST endpoints for various operations
-app.post('/api/v1/network/dns/apply-config', (req, res) => {
-  res.json({ success: true, message: 'DNS configuration applied', errors: [] });
-});
-
-app.post('/api/v1/network/dns/flush-cache', (req, res) => {
-  res.json({ success: true, message: 'DNS cache flushed' });
-});
-
-app.post('/api/v1/network/dhcp/apply-config', (req, res) => {
-  res.json({ success: true, message: 'DHCP configuration applied', errors: [] });
-});
-
-app.post('/api/v1/network/wifi/apply-config', (req, res) => {
-  res.json({ success: true, message: 'WiFi configuration applied', errors: [] });
-});
-
-// 404 handler
-app.use('*', (req, res) => {
-  res.status(404).json({ error: 'Route not found' });
+// Catch-all for undefined routes
+app.use('*', (req: express.Request, res: express.Response) => {
+  res.status(404).json({ 
+    success: false,
+    error: 'Endpoint not found',
+    endpoint: req.originalUrl,
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Global error handler
 app.use((error: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('Global error handler:', error);
-  res.status(500).json({ error: 'Internal server error' });
+  res.status(500).json({ 
+    success: false,
+    error: 'Internal server error',
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Start server

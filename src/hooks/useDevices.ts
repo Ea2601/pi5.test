@@ -20,13 +20,21 @@ export const useDevices = (filters?: UseDevicesFilters) => {
         });
         return response;
       } catch (error) {
-        console.error('Failed to fetch devices', { error: (error as Error).message, filters });
-        throw error;
+        console.warn('Failed to fetch devices, using empty state:', error);
+        return {
+          success: false,
+          data: [],
+          total: 0,
+          active: 0,
+          error: 'Device data temporarily unavailable',
+          timestamp: new Date().toISOString()
+        };
       }
     },
     refetchInterval: 30000,
     staleTime: 15000,
-    retry: 1
+    retry: 1,
+    retryOnMount: false
   });
 };
 

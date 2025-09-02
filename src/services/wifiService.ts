@@ -4,7 +4,7 @@ import { unifiedApiClient } from './unifiedApiClient';
 export class WiFiService {
   async getAccessPoints() {
     try {
-      const response = await unifiedApiClient.get('/api/v1/network/wifi/access-points');
+      const response = await unifiedApiClient.get<any[]>('/api/v1/network/wifi/access-points');
       return response.data || [];
     } catch (error) {
       console.error('Get access points error:', error);
@@ -226,7 +226,7 @@ export class WiFiService {
 
   async getWiFiStats() {
     try {
-      const response = await unifiedApiClient.get('/api/v1/network/wifi/stats');
+      const response = await unifiedApiClient.get<any>('/api/v1/network/wifi/stats');
       return response.data || {
         total_access_points: 0,
         online_access_points: 0,

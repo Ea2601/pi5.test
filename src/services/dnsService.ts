@@ -4,7 +4,7 @@ import { unifiedApiClient } from './unifiedApiClient';
 export class DNSService {
   async getDNSServers() {
     try {
-      const response = await unifiedApiClient.get('/api/v1/network/dns/servers');
+      const response = await unifiedApiClient.get<any[]>('/api/v1/network/dns/servers');
       return response.data || [];
     } catch (error) {
       console.error('Get DNS servers error:', error);
@@ -184,7 +184,7 @@ export class DNSService {
 
   async getDNSStats(timeRange: string) {
     try {
-      const response = await unifiedApiClient.get(`/api/v1/network/dns/stats?range=${timeRange}`);
+      const response = await unifiedApiClient.get<any>(`/api/v1/network/dns/stats?range=${timeRange}`);
       return response.data || {
         total_queries: 0,
         blocked_queries: 0,

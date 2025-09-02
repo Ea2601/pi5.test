@@ -1,248 +1,57 @@
-// Unified API Client - Single Implementation for All Services
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { config } from '../config/environment';
-import { UnifiedLogger } from './logger';
-
+// Unified API Client - Browser Compatible
 export interface ApiResponse<T = any> {
   success: boolean;
   data?: T;
   error?: string;
   timestamp: string;
-  requestId?: string;
-}
-
-export interface ApiErrorResponse {
-  success: false;
-  error: string;
-  code?: string;
-  details?: any;
-  timestamp: string;
-  requestId?: string;
 }
 
 export class UnifiedApiClient {
-  private client: AxiosInstance;
   private serviceName: string;
-  private logger = UnifiedLogger.getInstance('api-client');
+  private baseURL: string;
 
   constructor(serviceName: string, baseURL?: string) {
     this.serviceName = serviceName;
-    
-    this.client = axios.create({
-      baseURL: baseURL || this.getDefaultBaseURL(),
-      timeout: config.API_TIMEOUT,
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Client-Service': serviceName,
-        'X-Client-Version': config.APP_VERSION
-      }
-    });
-
-    this.setupInterceptors();
+    this.baseURL = baseURL || '/';
   }
 
-  private getDefaultBaseURL(): string {
-    const protocol = typeof window !== 'undefined' ? window.location.protocol : 'http:';
-    const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
-    return `${protocol}//${hostname}:${config.API_GATEWAY_PORT}`;
-  }
-
-  private setupInterceptors() {
-    // Request interceptor
-    this.client.interceptors.request.use(
-      (config) => {
-        const startTime = Date.now();
-        config.metadata = { startTime };
-
-        // Add authentication token if available
-        const token = this.getAuthToken();
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-
-        // Add request ID for tracing
-        const requestId = this.generateRequestId();
-        config.headers['X-Request-ID'] = requestId;
-
-        UnifiedLogger.logApiRequest(
-          this.serviceName,
-          config.method?.toUpperCase() || 'GET',
-          config.url || '',
-          { 
-            requestId,
-            headers: this.sanitizeHeaders(config.headers)
-          }
-        );
-
-        return config;
-      },
-      (error) => {
-        UnifiedLogger.logError(this.serviceName, error);
-        return Promise.reject(error);
-      }
-    );
-
-    // Response interceptor
-    this.client.interceptors.response.use(
-      (response: AxiosResponse) => {
-        const duration = Date.now() - (response.config.metadata?.startTime || 0);
-        const requestId = response.config.headers['X-Request-ID'];
-
-        UnifiedLogger.logApiResponse(
-          this.serviceName,
-          response.config.method?.toUpperCase() || 'GET',
-          response.config.url || '',
-          response.status,
-          duration,
-          { requestId }
-        );
-
-        // Log slow requests
-        if (duration > 2000) {
-          this.logger.warn('Slow API request detected', {
-            url: response.config.url,
-            method: response.config.method,
-            duration,
-            requestId
-          });
-        }
-
-        return response;
-      },
-      (error) => {
-        const duration = error.config?.metadata?.startTime 
-          ? Date.now() - error.config.metadata.startTime 
-          : 0;
-        const requestId = error.config?.headers?.['X-Request-ID'];
-
-        // Handle specific error cases
-        if (error.response?.status === 401) {
-          this.handleAuthError();
-        } else if (error.response?.status === 429) {
-          this.handleRateLimitError();
-        }
-
-        UnifiedLogger.logError(this.serviceName, error, {
-          url: error.config?.url,
-          method: error.config?.method,
-          status: error.response?.status,
-          duration,
-          requestId
-        });
-
-        return Promise.reject(this.normalizeError(error));
-      }
-    );
-  }
-
-  private getAuthToken(): string | null {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('auth_token');
-    }
-    return process.env.SERVICE_AUTH_TOKEN || null;
-  }
-
-  private generateRequestId(): string {
-    return `${this.serviceName}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-  }
-
-  private sanitizeHeaders(headers: any): any {
-    const sanitized = { ...headers };
-    delete sanitized.Authorization; // Don't log auth tokens
-    return sanitized;
-  }
-
-  private handleAuthError() {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('auth_token');
-      // Emit auth error event for frontend
-      window.dispatchEvent(new CustomEvent('auth:error'));
-    }
-  }
-
-  private handleRateLimitError() {
-    this.logger.warn('Rate limit exceeded', {
-      service: this.serviceName,
-      action: 'backoff_required'
-    });
-  }
-
-  private normalizeError(error: any): ApiErrorResponse {
-    const timestamp = new Date().toISOString();
-    const requestId = error.config?.headers?.['X-Request-ID'];
-
-    if (error.response) {
-      // Server responded with error status
-      return {
-        success: false,
-        error: error.response.data?.error || error.response.statusText || 'Server error',
-        code: error.response.data?.code || String(error.response.status),
-        details: error.response.data?.details,
-        timestamp,
-        requestId
-      };
-    } else if (error.request) {
-      // Network error
-      return {
-        success: false,
-        error: 'Network error - server unreachable',
-        code: 'NETWORK_ERROR',
-        timestamp,
-        requestId
-      };
-    } else {
-      // Request setup error
-      return {
-        success: false,
-        error: error.message || 'Request configuration error',
-        code: 'CONFIG_ERROR',
-        timestamp,
-        requestId
-      };
-    }
-  }
-
-  // Generic request method
-  async request<T>(config: AxiosRequestConfig): Promise<ApiResponse<T>> {
+  private async request<T>(config: RequestInit & { url: string }): Promise<ApiResponse<T>> {
     try {
-      const response = await this.client.request(config);
+      const response = await fetch(`${this.baseURL}${config.url}`, {
+        method: config.method || 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          ...config.headers
+        },
+        body: config.body ? JSON.stringify(config.body) : undefined
+      });
+
+      const data = await response.json();
       
-      return {
-        success: true,
-        data: response.data,
-        timestamp: new Date().toISOString(),
-        requestId: response.config.headers['X-Request-ID']
-      };
+      if (!response.ok) {
+        throw new Error(data.error || `HTTP ${response.status}`);
+      }
+
+      return data;
     } catch (error) {
-      throw error; // Let interceptor handle error normalization
+      console.error(`API Error [${this.serviceName}]:`, error);
+      throw error;
     }
   }
 
-  // Convenience methods
-  async get<T>(url: string, params?: any): Promise<ApiResponse<T>> {
-    return this.request<T>({ method: 'GET', url, params });
+  async get<T>(url: string): Promise<ApiResponse<T>> {
+    return this.request<T>({ url, method: 'GET' });
   }
 
   async post<T>(url: string, data?: any): Promise<ApiResponse<T>> {
-    return this.request<T>({ method: 'POST', url, data });
+    return this.request<T>({ url, method: 'POST', body: data });
   }
 
   async put<T>(url: string, data?: any): Promise<ApiResponse<T>> {
-    return this.request<T>({ method: 'PUT', url, data });
+    return this.request<T>({ url, method: 'PUT', body: data });
   }
 
   async delete<T>(url: string): Promise<ApiResponse<T>> {
-    return this.request<T>({ method: 'DELETE', url });
-  }
-
-  async patch<T>(url: string, data?: any): Promise<ApiResponse<T>> {
-    return this.request<T>({ method: 'PATCH', url, data });
+    return this.request<T>({ url, method: 'DELETE' });
   }
 }
-
-// Service-specific client instances
-export const frontendApiClient = new UnifiedApiClient('frontend');
-export const gatewayApiClient = new UnifiedApiClient('api-gateway');
-export const networkApiClient = new UnifiedApiClient('network-service');
-export const vpnApiClient = new UnifiedApiClient('vpn-service');
-export const automationApiClient = new UnifiedApiClient('automation-service');

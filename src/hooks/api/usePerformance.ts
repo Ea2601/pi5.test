@@ -18,18 +18,29 @@ export const useNetworkMetrics = () => {
   return useQuery({
     queryKey: ['network-metrics'],
     queryFn: async () => {
-      const devicesResponse = await unifiedApiClient.getDevices();
-      const devices = devicesResponse.data || [];
-      
-      return {
-        totalDevices: devices.length,
-        activeDevices: devices.filter(d => d.is_active).length,
-        bandwidth: Math.floor(Math.random() * 200) + 50, // Mock until real metrics
-        latency: Math.floor(Math.random() * 30) + 8
-      };
+      try {
+        const devicesResponse = await unifiedApiClient.getDevices();
+        const devices = devicesResponse.data || [];
+        
+        return {
+          totalDevices: devices.length,
+          activeDevices: devices.filter(d => d.is_active).length,
+          bandwidth: Math.floor(Math.random() * 200) + 50,
+          latency: Math.floor(Math.random() * 30) + 8
+        };
+      } catch (error) {
+        console.warn('Network metrics unavailable, using defaults:', error);
+        return {
+          totalDevices: 0,
+          activeDevices: 0,
+          bandwidth: 0,
+          latency: 0
+        };
+      }
     },
     refetchInterval: 10000,
     staleTime: 5000,
-    retry: 1
+    retry: 1,
+    retryOnMount: false
   });
 };

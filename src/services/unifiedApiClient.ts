@@ -1,5 +1,5 @@
 // Unified Frontend API Client - Replaces All Individual API Clients
-import { UnifiedApiClient, ApiResponse } from '../../shared/utils/apiClient';
+import { UnifiedApiClient, ApiResponse } from '../shared/utils/apiClient';
 
 interface NetworkDevice {
   mac_address: string;
@@ -39,8 +39,6 @@ interface DevicesResponse extends ApiResponse<NetworkDevice[]> {
 class Pi5SupernodeAPIClient extends UnifiedApiClient {
   constructor() {
     super('frontend');
-    // Override base URL for frontend to use relative paths with Vite proxy
-    this.client.defaults.baseURL = '/';
   }
 
   // Network Device Management

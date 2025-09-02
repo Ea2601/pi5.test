@@ -6,6 +6,7 @@ import { Button } from '../ui/Button';
 import { Modal } from '../ui/Modal';
 import { MetricCard } from '../cards/MetricCard';
 import { ControlCard } from '../cards/ControlCard';
+import { ErrorBoundary, NetworkErrorFallback } from '../ui/ErrorBoundary';
 import { cn } from '../../lib/utils';
 
 interface NetworkInterface {

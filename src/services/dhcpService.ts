@@ -4,7 +4,7 @@ import { unifiedApiClient } from './unifiedApiClient';
 export class DHCPService {
   async getDHCPPools() {
     try {
-      const response = await unifiedApiClient.get('/api/v1/network/dhcp/pools');
+      const response = await unifiedApiClient.get<any[]>('/api/v1/network/dhcp/pools');
       return response.data || [];
     } catch (error) {
       console.error('Get DHCP pools error:', error);
@@ -187,7 +187,7 @@ export class DHCPService {
 
   async getDHCPStats() {
     try {
-      const response = await unifiedApiClient.get('/api/v1/network/dhcp/stats');
+      const response = await unifiedApiClient.get<any>('/api/v1/network/dhcp/stats');
       return response.data || {
         total_pools: 0,
         active_pools: 0,
