@@ -1,0 +1,665 @@
+openapi: 3.0.3
+info:
+  title: Pi5 Supernode API
+  description: Enterprise Network Management Platform API
+  version: 2.1.4
+  contact:
+    name: Pi5 Supernode Team
+    url: https://github.com/pi5-supernode
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+  - url: https://api.pi5supernode.local
+    description: Production server
+
+paths:
+  # Health Check Endpoints
+  /health:
+    get:
+      summary: System health check
+      tags: [Health]
+      responses:
+        '200':
+          description: System is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /health/services:
+    get:
+      summary: All services health check
+      tags: [Health]
+      responses:
+        '200':
+          description: Services health status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  services:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ServiceHealth'
+
+  # Network Device Management
+  /api/v1/network/devices:
+    get:
+      summary: List network devices
+      tags: [Network Devices]
+      parameters:
+        - name: active
+          in: query
+          schema:
+            type: boolean
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [Mobile, PC, IoT, Game Console]
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of network devices
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetworkDevicesResponse'
+
+    post:
+      summary: Create network device
+      tags: [Network Devices]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NetworkDeviceInput'
+      responses:
+        '201':
+          description: Device created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetworkDevice'
+
+  /api/v1/network/devices/{macAddress}:
+    get:
+      summary: Get device by MAC address
+      tags: [Network Devices]
+      parameters:
+        - name: macAddress
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$'
+      responses:
+        '200':
+          description: Device details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetworkDevice'
+
+    put:
+      summary: Update device
+      tags: [Network Devices]
+      parameters:
+        - name: macAddress
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NetworkDeviceUpdate'
+      responses:
+        '200':
+          description: Device updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetworkDevice'
+
+    delete:
+      summary: Delete device
+      tags: [Network Devices]
+      parameters:
+        - name: macAddress
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Device deleted successfully
+
+  # DHCP Management
+  /api/v1/network/dhcp/pools:
+    get:
+      summary: List DHCP pools
+      tags: [DHCP]
+      responses:
+        '200':
+          description: List of DHCP pools
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DHCPPool'
+
+    post:
+      summary: Create DHCP pool
+      tags: [DHCP]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DHCPPoolInput'
+      responses:
+        '201':
+          description: DHCP pool created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DHCPPool'
+
+  # DNS Management
+  /api/v1/network/dns/servers:
+    get:
+      summary: List DNS servers
+      tags: [DNS]
+      responses:
+        '200':
+          description: List of DNS servers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DNSServer'
+
+  # VPN Management
+  /api/v1/vpn/servers:
+    get:
+      summary: List WireGuard servers
+      tags: [VPN]
+      responses:
+        '200':
+          description: List of WireGuard servers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WireGuardServer'
+
+  /api/v1/vpn/clients:
+    get:
+      summary: List WireGuard clients
+      tags: [VPN]
+      parameters:
+        - name: server_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of WireGuard clients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WireGuardClient'
+
+components:
+  schemas:
+    # Common Response Types
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+        error:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        requestId:
+          type: string
+
+    HealthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        service:
+          type: string
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+
+    ServiceHealth:
+      type: object
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        latency:
+          type: number
+        lastCheck:
+          type: string
+          format: date-time
+
+    # Network Device Types
+    NetworkDevice:
+      type: object
+      properties:
+        mac_address:
+          type: string
+          pattern: '^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$'
+        ip_address:
+          type: string
+          format: ipv4
+        device_name:
+          type: string
+          maxLength: 255
+        device_type:
+          type: string
+          enum: [Mobile, PC, IoT, Game Console]
+        device_brand:
+          type: string
+          maxLength: 100
+        is_active:
+          type: boolean
+        last_seen:
+          type: string
+          format: date-time
+        first_discovered:
+          type: string
+          format: date-time
+        dhcp_lease_expires:
+          type: string
+          format: date-time
+        vendor_info:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    NetworkDeviceInput:
+      type: object
+      required:
+        - mac_address
+        - device_name
+        - device_type
+      properties:
+        mac_address:
+          type: string
+          pattern: '^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$'
+        ip_address:
+          type: string
+          format: ipv4
+        device_name:
+          type: string
+          maxLength: 255
+        device_type:
+          type: string
+          enum: [Mobile, PC, IoT, Game Console]
+        device_brand:
+          type: string
+          maxLength: 100
+
+    NetworkDeviceUpdate:
+      type: object
+      properties:
+        device_name:
+          type: string
+          maxLength: 255
+        device_type:
+          type: string
+          enum: [Mobile, PC, IoT, Game Console]
+        device_brand:
+          type: string
+          maxLength: 100
+        is_active:
+          type: boolean
+
+    NetworkDevicesResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/NetworkDevice'
+            total:
+              type: integer
+            active:
+              type: integer
+
+    # DHCP Types
+    DHCPPool:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        vlan_id:
+          type: integer
+          minimum: 1
+          maximum: 4094
+        network_cidr:
+          type: string
+        start_ip:
+          type: string
+          format: ipv4
+        end_ip:
+          type: string
+          format: ipv4
+        gateway_ip:
+          type: string
+          format: ipv4
+        dns_servers:
+          type: array
+          items:
+            type: string
+            format: ipv4
+        lease_time:
+          type: string
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    DHCPPoolInput:
+      type: object
+      required:
+        - name
+        - vlan_id
+        - network_cidr
+        - start_ip
+        - end_ip
+        - gateway_ip
+        - dns_servers
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+        vlan_id:
+          type: integer
+          minimum: 1
+          maximum: 4094
+        network_cidr:
+          type: string
+        start_ip:
+          type: string
+          format: ipv4
+        end_ip:
+          type: string
+          format: ipv4
+        gateway_ip:
+          type: string
+          format: ipv4
+        dns_servers:
+          type: array
+          items:
+            type: string
+            format: ipv4
+          minItems: 1
+        lease_time:
+          type: string
+          pattern: '^\d+\s+(hours?|days?)$'
+
+    # DNS Types
+    DNSServer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        ip_address:
+          type: string
+          format: ipv4
+        port:
+          type: integer
+          minimum: 1
+          maximum: 65535
+        type:
+          type: string
+          enum: [standard, doh, dot, dnssec]
+        provider:
+          type: string
+          enum: [google, cloudflare, quad9, custom]
+        supports_dnssec:
+          type: boolean
+        supports_doh:
+          type: boolean
+        supports_dot:
+          type: boolean
+        doh_url:
+          type: string
+          format: uri
+        dot_hostname:
+          type: string
+        response_time_ms:
+          type: integer
+        reliability_score:
+          type: number
+          minimum: 0
+          maximum: 1
+        is_active:
+          type: boolean
+        priority:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    # Wi-Fi Types
+    WiFiNetwork:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        ap_id:
+          type: string
+          format: uuid
+        ssid:
+          type: string
+          maxLength: 32
+        description:
+          type: string
+        vlan_id:
+          type: integer
+          minimum: 1
+          maximum: 4094
+        network_type:
+          type: string
+          enum: [standard, guest, iot, admin]
+        encryption_type:
+          type: string
+          enum: [open, wep, wpa2, wpa3, wpa2_enterprise, wpa3_enterprise]
+        passphrase:
+          type: string
+          minLength: 8
+          maxLength: 63
+        frequency_band:
+          type: string
+          enum: [2.4ghz, 5ghz, 6ghz]
+        channel:
+          type: integer
+        max_clients:
+          type: integer
+          minimum: 1
+          maximum: 200
+        is_enabled:
+          type: boolean
+        client_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    # VPN Types
+    WireGuardServer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        interface_name:
+          type: string
+          pattern: '^wg\d+$'
+        listen_port:
+          type: integer
+          minimum: 1
+          maximum: 65535
+        public_key:
+          type: string
+        network_cidr:
+          type: string
+        endpoint:
+          type: string
+        dns_servers:
+          type: array
+          items:
+            type: string
+            format: ipv4
+        is_active:
+          type: boolean
+        max_clients:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    WireGuardClient:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        server_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        public_key:
+          type: string
+        allowed_ips:
+          type: string
+        assigned_ip:
+          type: string
+          format: ipv4
+        persistent_keepalive:
+          type: integer
+          minimum: 0
+          maximum: 3600
+        is_enabled:
+          type: boolean
+        connection_status:
+          type: string
+          enum: [connected, disconnected, connecting, error]
+        last_handshake:
+          type: string
+          format: date-time
+        rx_bytes:
+          type: integer
+          format: int64
+        tx_bytes:
+          type: integer
+          format: int64
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: Health
+    description: System health monitoring
+  - name: Network Devices
+    description: Network device management
+  - name: DHCP
+    description: DHCP server management
+  - name: DNS
+    description: DNS server management
+  - name: WiFi
+    description: Wi-Fi network management
+  - name: VPN
+    description: VPN server and client management
+  - name: Traffic
+    description: Traffic routing and QoS
+  - name: Automation
+    description: Automation rules and webhooks

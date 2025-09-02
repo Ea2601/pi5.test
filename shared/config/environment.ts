@@ -1,5 +1,10 @@
-// Centralized Environment Configuration
-// Single source of truth for all environment variables
+// Unified Environment Configuration - Single Source of Truth
+import dotenv from 'dotenv';
+import path from 'path';
+
+// Load environment files
+dotenv.config();
+dotenv.config({ path: path.join(process.cwd(), '.env.local') });
 
 export interface EnvironmentConfig {
   // Application
@@ -11,24 +16,22 @@ export interface EnvironmentConfig {
   DATABASE_URL: string;
   POSTGRES_PASSWORD: string;
   REDIS_URL: string;
+  SUPABASE_URL: string;
+  SUPABASE_KEY: string;
   
   // API Services
   API_GATEWAY_PORT: number;
   NETWORK_SERVICE_PORT: number;
   VPN_SERVICE_PORT: number;
   AUTOMATION_SERVICE_PORT: number;
+  API_TIMEOUT: number;
   
   // Authentication
   JWT_SECRET: string;
   JWT_EXPIRES_IN: string;
+  SESSION_SECRET: string;
   
-  // Frontend
-  FRONTEND_URL: string;
-  VITE_SUPABASE_URL?: string;
-  VITE_SUPABASE_ANON_KEY?: string;
-  VITE_API_BASE_URL?: string;
-  
-  // External Integrations
+  // External Services
   TELEGRAM_BOT_TOKEN?: string;
   WEBHOOK_BASE_URL?: string;
   
@@ -36,259 +39,230 @@ export interface EnvironmentConfig {
   GRAFANA_PASSWORD: string;
   LOG_LEVEL: 'debug' | 'info' | 'warn' | 'error';
   LOG_DIR: string;
+  PROMETHEUS_PORT: number;
+  
+  // Frontend
+  FRONTEND_URL: string;
   
   // SSL/Security
   SSL_CERT_PATH?: string;
   SSL_KEY_PATH?: string;
+  ENABLE_HTTPS: boolean;
   
-  // Database Pool
-  DB_POOL_MAX: number;
-  DB_IDLE_TIMEOUT: number;
-  DB_CONNECTION_TIMEOUT: number;
+  // Performance
+  CACHE_TTL: number;
+  MAX_CONNECTIONS: number;
+  RATE_LIMIT_WINDOW: number;
+  RATE_LIMIT_MAX_REQUESTS: number;
+  
+  // WireGuard
+  WG_INTERFACE_PREFIX: string;
+  WG_DEFAULT_PORT: number;
+  WG_KEY_ROTATION_DAYS: number;
+  
+  // Network
+  DEFAULT_VLAN: number;
+  MANAGEMENT_VLAN: number;
+  DNS_CACHE_SIZE: number;
+  DHCP_LEASE_TIME: string;
+  
+  // Backup
+  BACKUP_ENABLED: boolean;
+  BACKUP_SCHEDULE: string;
+  BACKUP_RETENTION_DAYS: number;
 }
 
-// Environment variable definitions with defaults and validation
-export const ENV_DEFINITIONS = {
-  // Required variables
-  DATABASE_URL: {
-    required: true,
-    description: 'PostgreSQL connection string',
-    example: 'postgresql://postgres:password@localhost:5432/pi5_supernode'
-  },
-  JWT_SECRET: {
-    required: true,
-    description: 'JWT signing secret (min 32 characters)',
-    example: 'your-super-secret-jwt-key-change-this-in-production'
-  },
-  POSTGRES_PASSWORD: {
-    required: true,
-    description: 'PostgreSQL database password',
-    example: 'your-secure-password'
-  },
-  
-  // Optional with defaults
-  NODE_ENV: {
-    required: false,
-    default: 'development',
-    description: 'Application environment',
-    options: ['development', 'production', 'test']
-  },
-  APP_VERSION: {
-    required: false,
-    default: '2.1.4',
-    description: 'Application version'
-  },
-  APP_NAME: {
-    required: false,
-    default: 'Pi5 Supernode',
-    description: 'Application display name'
-  },
-  
-  // Service Ports
-  API_GATEWAY_PORT: {
-    required: false,
-    default: 3000,
-    description: 'API Gateway port',
-    type: 'number'
-  },
-  NETWORK_SERVICE_PORT: {
-    required: false,
-    default: 3001,
-    description: 'Network service port',
-    type: 'number'
-  },
-  VPN_SERVICE_PORT: {
-    required: false,
-    default: 3002,
-    description: 'VPN service port',
-    type: 'number'
-  },
-  AUTOMATION_SERVICE_PORT: {
-    required: false,
-    default: 3003,
-    description: 'Automation service port',
-    type: 'number'
-  },
-  
-  // Authentication
-  JWT_EXPIRES_IN: {
-    required: false,
-    default: '24h',
-    description: 'JWT token expiration time'
-  },
-  
-  // Frontend
-  FRONTEND_URL: {
-    required: false,
-    default: 'http://localhost:5173',
-    description: 'Frontend application URL'
-  },
-  
-  // Monitoring
-  GRAFANA_PASSWORD: {
-    required: false,
-    default: 'admin',
-    description: 'Grafana admin password'
-  },
-  LOG_LEVEL: {
-    required: false,
-    default: 'info',
-    description: 'Application log level',
-    options: ['debug', 'info', 'warn', 'error']
-  },
-  LOG_DIR: {
-    required: false,
-    default: 'logs',
-    description: 'Log files directory'
-  },
-  
-  // Database Pool
-  DB_POOL_MAX: {
-    required: false,
-    default: 20,
-    description: 'Maximum database connections',
-    type: 'number'
-  },
-  DB_IDLE_TIMEOUT: {
-    required: false,
-    default: 30000,
-    description: 'Database idle timeout (ms)',
-    type: 'number'
-  },
-  DB_CONNECTION_TIMEOUT: {
-    required: false,
-    default: 2000,
-    description: 'Database connection timeout (ms)',
-    type: 'number'
-  },
-  
-  // Redis
-  REDIS_URL: {
-    required: false,
-    default: 'redis://localhost:6379',
-    description: 'Redis connection URL'
-  }
-} as const;
+class EnvironmentManager {
+  private static _config: EnvironmentConfig | null = null;
 
-// Environment validation and loading
-export class EnvironmentManager {
-  private static instance: EnvironmentManager;
-  private config: EnvironmentConfig;
-
-  private constructor() {
-    this.config = this.loadAndValidateEnvironment();
-  }
-
-  public static getInstance(): EnvironmentManager {
-    if (!EnvironmentManager.instance) {
-      EnvironmentManager.instance = new EnvironmentManager();
+  static get config(): EnvironmentConfig {
+    if (!EnvironmentManager._config) {
+      EnvironmentManager._config = EnvironmentManager.loadConfig();
     }
-    return EnvironmentManager.instance;
+    return EnvironmentManager._config;
   }
 
-  public getConfig(): EnvironmentConfig {
-    return this.config;
-  }
+  private static loadConfig(): EnvironmentConfig {
+    // Validate required environment variables
+    const required = [
+      'DATABASE_URL',
+      'JWT_SECRET',
+      'SUPABASE_URL',
+      'SUPABASE_KEY'
+    ];
 
-  public get<K extends keyof EnvironmentConfig>(key: K): EnvironmentConfig[K] {
-    return this.config[key];
-  }
+    const missing = required.filter(key => !process.env[key]);
+    if (missing.length > 0) {
+      throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
+    }
 
-  private loadAndValidateEnvironment(): EnvironmentConfig {
-    const errors: string[] = [];
-    const warnings: string[] = [];
-    const config: Partial<EnvironmentConfig> = {};
-
-    // Load and validate each environment variable
-    Object.entries(ENV_DEFINITIONS).forEach(([key, definition]) => {
-      const envValue = process.env[key];
+    return {
+      // Application
+      NODE_ENV: (process.env.NODE_ENV as any) || 'development',
+      APP_VERSION: process.env.APP_VERSION || '2.1.4',
+      APP_NAME: process.env.APP_NAME || 'Pi5 Supernode',
       
-      if (definition.required && !envValue) {
-        errors.push(`Required environment variable ${key} is not set`);
-        return;
-      }
-
-      let value: any = envValue || definition.default;
-
-      // Type conversion
-      if (definition.type === 'number' && typeof value === 'string') {
-        value = parseInt(value, 10);
-        if (isNaN(value)) {
-          errors.push(`Environment variable ${key} must be a valid number`);
-          return;
-        }
-      }
-
-      // Options validation
-      if (definition.options && !definition.options.includes(value)) {
-        errors.push(`Environment variable ${key} must be one of: ${definition.options.join(', ')}`);
-        return;
-      }
-
-      // Set the value
-      (config as any)[key] = value;
-
-      // Warnings for defaults
-      if (!envValue && definition.default) {
-        warnings.push(`Using default value for ${key}: ${definition.default}`);
-      }
-    });
-
-    // Throw errors if any required variables are missing
-    if (errors.length > 0) {
-      throw new Error(`Environment validation failed:\n${errors.join('\n')}`);
-    }
-
-    // Log warnings in development
-    if (warnings.length > 0 && config.NODE_ENV === 'development') {
-      console.warn('Environment warnings:', warnings);
-    }
-
-    return config as EnvironmentConfig;
-  }
-
-  // Generate .env template
-  public generateEnvTemplate(): string {
-    let template = `# Pi5 Supernode Environment Configuration
-# Generated: ${new Date().toISOString()}
-# Version: ${this.config.APP_VERSION}
-
-`;
-
-    Object.entries(ENV_DEFINITIONS).forEach(([key, definition]) => {
-      template += `# ${definition.description}\n`;
-      if (definition.example) {
-        template += `# Example: ${definition.example}\n`;
-      }
-      if (definition.options) {
-        template += `# Options: ${definition.options.join(', ')}\n`;
-      }
+      // Database
+      DATABASE_URL: process.env.DATABASE_URL!,
+      POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD || 'postgres',
+      REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
+      SUPABASE_URL: process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL!,
+      SUPABASE_KEY: process.env.SUPABASE_KEY || process.env.VITE_SUPABASE_ANON_KEY!,
       
-      const value = definition.required ? '' : definition.default || '';
-      template += `${key}=${value}\n\n`;
-    });
-
-    return template;
+      // API Services
+      API_GATEWAY_PORT: parseInt(process.env.API_GATEWAY_PORT || '3000'),
+      NETWORK_SERVICE_PORT: parseInt(process.env.NETWORK_SERVICE_PORT || '3001'),
+      VPN_SERVICE_PORT: parseInt(process.env.VPN_SERVICE_PORT || '3002'),
+      AUTOMATION_SERVICE_PORT: parseInt(process.env.AUTOMATION_SERVICE_PORT || '3003'),
+      API_TIMEOUT: parseInt(process.env.API_TIMEOUT || '10000'),
+      
+      // Authentication
+      JWT_SECRET: process.env.JWT_SECRET!,
+      JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '24h',
+      SESSION_SECRET: process.env.SESSION_SECRET || process.env.JWT_SECRET!,
+      
+      // External Services
+      TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN,
+      WEBHOOK_BASE_URL: process.env.WEBHOOK_BASE_URL,
+      
+      // Monitoring
+      GRAFANA_PASSWORD: process.env.GRAFANA_PASSWORD || 'admin',
+      LOG_LEVEL: (process.env.LOG_LEVEL as any) || 'info',
+      LOG_DIR: process.env.LOG_DIR || './logs',
+      PROMETHEUS_PORT: parseInt(process.env.PROMETHEUS_PORT || '9090'),
+      
+      // Frontend
+      FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:5173',
+      
+      // SSL/Security
+      SSL_CERT_PATH: process.env.SSL_CERT_PATH,
+      SSL_KEY_PATH: process.env.SSL_KEY_PATH,
+      ENABLE_HTTPS: process.env.ENABLE_HTTPS === 'true',
+      
+      // Performance
+      CACHE_TTL: parseInt(process.env.CACHE_TTL || '300'),
+      MAX_CONNECTIONS: parseInt(process.env.MAX_CONNECTIONS || '100'),
+      RATE_LIMIT_WINDOW: parseInt(process.env.RATE_LIMIT_WINDOW || '900000'), // 15 minutes
+      RATE_LIMIT_MAX_REQUESTS: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'),
+      
+      // WireGuard
+      WG_INTERFACE_PREFIX: process.env.WG_INTERFACE_PREFIX || 'wg',
+      WG_DEFAULT_PORT: parseInt(process.env.WG_DEFAULT_PORT || '51820'),
+      WG_KEY_ROTATION_DAYS: parseInt(process.env.WG_KEY_ROTATION_DAYS || '90'),
+      
+      // Network
+      DEFAULT_VLAN: parseInt(process.env.DEFAULT_VLAN || '20'),
+      MANAGEMENT_VLAN: parseInt(process.env.MANAGEMENT_VLAN || '10'),
+      DNS_CACHE_SIZE: parseInt(process.env.DNS_CACHE_SIZE || '100'),
+      DHCP_LEASE_TIME: process.env.DHCP_LEASE_TIME || '24 hours',
+      
+      // Backup
+      BACKUP_ENABLED: process.env.BACKUP_ENABLED === 'true',
+      BACKUP_SCHEDULE: process.env.BACKUP_SCHEDULE || '0 2 * * *', // Daily at 2 AM
+      BACKUP_RETENTION_DAYS: parseInt(process.env.BACKUP_RETENTION_DAYS || '30')
+    };
   }
 
-  // Validate current environment
-  public validateEnvironment(): { valid: boolean; errors: string[]; warnings: string[] } {
+  // Environment validation
+  static validate(): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
-    const warnings: string[] = [];
+    const config = EnvironmentManager.config;
 
-    try {
-      this.loadAndValidateEnvironment();
-      return { valid: true, errors: [], warnings: [] };
-    } catch (error) {
-      return { 
-        valid: false, 
-        errors: [error instanceof Error ? error.message : 'Validation failed'], 
-        warnings: [] 
-      };
+    // Validate database URL format
+    if (!config.DATABASE_URL.startsWith('postgresql://')) {
+      errors.push('DATABASE_URL must be a valid PostgreSQL connection string');
+    }
+
+    // Validate ports
+    const ports = [
+      config.API_GATEWAY_PORT,
+      config.NETWORK_SERVICE_PORT,
+      config.VPN_SERVICE_PORT,
+      config.AUTOMATION_SERVICE_PORT
+    ];
+
+    const duplicatePorts = ports.filter((port, index) => ports.indexOf(port) !== index);
+    if (duplicatePorts.length > 0) {
+      errors.push(`Duplicate ports detected: ${duplicatePorts.join(', ')}`);
+    }
+
+    // Validate JWT secret strength
+    if (config.JWT_SECRET.length < 32) {
+      errors.push('JWT_SECRET should be at least 32 characters long');
+    }
+
+    // Validate VLAN IDs
+    if (config.DEFAULT_VLAN < 1 || config.DEFAULT_VLAN > 4094) {
+      errors.push('DEFAULT_VLAN must be between 1 and 4094');
+    }
+
+    if (config.MANAGEMENT_VLAN < 1 || config.MANAGEMENT_VLAN > 4094) {
+      errors.push('MANAGEMENT_VLAN must be between 1 and 4094');
+    }
+
+    return {
+      valid: errors.length === 0,
+      errors
+    };
+  }
+
+  // Get service-specific environment
+  static getServiceConfig(serviceName: string): Partial<EnvironmentConfig> {
+    const config = EnvironmentManager.config;
+    
+    const commonConfig = {
+      NODE_ENV: config.NODE_ENV,
+      APP_VERSION: config.APP_VERSION,
+      DATABASE_URL: config.DATABASE_URL,
+      REDIS_URL: config.REDIS_URL,
+      JWT_SECRET: config.JWT_SECRET,
+      LOG_LEVEL: config.LOG_LEVEL,
+      LOG_DIR: config.LOG_DIR
+    };
+
+    switch (serviceName) {
+      case 'api-gateway':
+        return {
+          ...commonConfig,
+          API_GATEWAY_PORT: config.API_GATEWAY_PORT,
+          FRONTEND_URL: config.FRONTEND_URL,
+          RATE_LIMIT_WINDOW: config.RATE_LIMIT_WINDOW,
+          RATE_LIMIT_MAX_REQUESTS: config.RATE_LIMIT_MAX_REQUESTS
+        };
+        
+      case 'network-service':
+        return {
+          ...commonConfig,
+          NETWORK_SERVICE_PORT: config.NETWORK_SERVICE_PORT,
+          DEFAULT_VLAN: config.DEFAULT_VLAN,
+          MANAGEMENT_VLAN: config.MANAGEMENT_VLAN,
+          DNS_CACHE_SIZE: config.DNS_CACHE_SIZE,
+          DHCP_LEASE_TIME: config.DHCP_LEASE_TIME
+        };
+        
+      case 'vpn-service':
+        return {
+          ...commonConfig,
+          VPN_SERVICE_PORT: config.VPN_SERVICE_PORT,
+          WG_INTERFACE_PREFIX: config.WG_INTERFACE_PREFIX,
+          WG_DEFAULT_PORT: config.WG_DEFAULT_PORT,
+          WG_KEY_ROTATION_DAYS: config.WG_KEY_ROTATION_DAYS
+        };
+        
+      case 'automation-service':
+        return {
+          ...commonConfig,
+          AUTOMATION_SERVICE_PORT: config.AUTOMATION_SERVICE_PORT,
+          TELEGRAM_BOT_TOKEN: config.TELEGRAM_BOT_TOKEN,
+          WEBHOOK_BASE_URL: config.WEBHOOK_BASE_URL
+        };
+        
+      default:
+        return commonConfig;
     }
   }
 }
 
-// Export singleton instance
-export const env = EnvironmentManager.getInstance();
-export const config = env.getConfig();
+export const config = EnvironmentManager.config;
+export const validateEnvironment = EnvironmentManager.validate;
+export const getServiceConfig = EnvironmentManager.getServiceConfig;

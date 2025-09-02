@@ -1,171 +1,141 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { databaseService } from '../services/databaseService';
-import { logger } from '../utils/logger';
+@@ .. @@
+-import { fetchDevices, fetchDevice, createDevice, updateDevice, deleteDevice, wakeDevice } from '../mocks/queries';
++import { unifiedApiClient } from '../services/unifiedApiClient';
++import { NetworkAPI } from '../../shared/types/api';
+ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
++import { validator } from '../../shared/utils/validation';
++import { UnifiedLogger } from '../../shared/utils/logger';
 
-export interface UseDevicesFilters {
-  active?: boolean;
-  type?: string;
-  search?: string;
-}
++const logger = UnifiedLogger.getInstance('devices-hook');
 
-export const useDevices = (filters?: UseDevicesFilters) => {
-  return useQuery({
-    queryKey: ['devices', filters],
-    queryFn: async () => {
-      const result = await databaseService.getNetworkDevices(filters);
-      if (result.error) {
-        throw new Error(result.error.message || 'Failed to fetch devices');
-      }
-      return {
-        success: true,
-        data: result.data || [],
-        total: result.count || 0,
-        active: result.data?.filter(d => d.is_active).length || 0
-      };
-    },
-    refetchInterval: 30000, // Refetch every 30 seconds
-    staleTime: 15000, // Consider data stale after 15 seconds
-    retry: 1
-  });
-};
+ export interface UseDevicesFilters {
+   active?: boolean;
+   type?: string;
+   search?: string;
+ }
 
-export const useDevice = (macAddress: string) => {
-  return useQuery({
-    queryKey: ['device', macAddress],
-    queryFn: async () => {
-      const result = await databaseService.getNetworkDevice(macAddress);
-      if (result.error) {
-        throw new Error(result.error.message || 'Failed to fetch device');
-      }
-      return {
-        success: !!result.data,
-        data: result.data
-      };
-    },
-    enabled: !!macAddress,
-    retry: 1
-  });
-};
+ export const useDevices = (filters?: UseDevicesFilters) => {
+   return useQuery({
+     queryKey: ['devices', filters],
+-    queryFn: () => fetchDevices(filters),
++    queryFn: async () => {
++      try {
++        const response = await unifiedApiClient.getDevices(filters);
++        logger.info('Devices fetched successfully', {
++          count: response.data?.length || 0,
++          filters
++        });
++        return response;
++      } catch (error) {
++        logger.error('Failed to fetch devices', { error: (error as Error).message, filters });
++        throw error;
++      }
++    },
+     refetchInterval: 30000,
+     staleTime: 15000,
+     retry: 1
+   });
+ };
 
-export const useCreateDevice = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: async (deviceData: any) => {
-      const result = await databaseService.createNetworkDevice(deviceData);
-      if (result.error) {
-        throw new Error(result.error.message || 'Failed to create device');
-      }
-      return {
-        success: true,
-        data: result.data
-      };
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['devices'] });
-    },
-    onError: (error) => {
-      logger.error('Create device error:', error);
-    }
-  });
-};
+ export const useDevice = (macAddress: string) => {
+   return useQuery({
+     queryKey: ['device', macAddress],
+-    queryFn: () => fetchDevice(macAddress),
++    queryFn: () => unifiedApiClient.getDevice(macAddress),
+     enabled: !!macAddress,
+     staleTime: 60000
+   });
+ };
 
-export const useUpdateDevice = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: async ({ macAddress, updates }: { macAddress: string; updates: any }) => {
-      const result = await databaseService.updateNetworkDevice(macAddress, updates);
-      if (result.error) {
-        throw new Error(result.error.message || 'Failed to update device');
-      }
-      return {
-        success: true,
-        data: result.data
-      };
-    },
-    onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['devices'] });
-      queryClient.invalidateQueries({ queryKey: ['device', variables.macAddress] });
-    },
-    onError: (error) => {
-      logger.error('Update device error:', error);
-    }
-  });
-};
+ export const useCreateDevice = () => {
+   const queryClient = useQueryClient();
+   
+   return useMutation({
+-    mutationFn: createDevice,
++    mutationFn: async (deviceData: NetworkAPI.DeviceInput) => {
++      // Validate input
++      const validation = validator.validateNetworkDevice(deviceData);
++      if (!validation.valid) {
++        const errorMessage = validation.errors.map(e => e.message).join(', ');
++        throw new Error(`Validation failed: ${errorMessage}`);
++      }
++
++      return unifiedApiClient.createDevice(deviceData);
++    },
+     onSuccess: () => {
+       queryClient.invalidateQueries({ queryKey: ['devices'] });
++      logger.info('Device created successfully');
+     },
+     onError: (error) => {
+-      console.error('Create device error:', error);
++      logger.error('Failed to create device', { error: (error as Error).message });
+     }
+   });
+ };
 
-export const useDeleteDevice = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: async (macAddress: string) => {
-      const result = await databaseService.deleteNetworkDevice(macAddress);
-      if (result.error) {
-        throw new Error(result.error.message || 'Failed to delete device');
-      }
-      return { success: result.data };
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['devices'] });
-    },
-    onError: (error) => {
-      logger.error('Delete device error:', error);
-    }
-  });
-};
+ export const useUpdateDevice = () => {
+   const queryClient = useQueryClient();
+   
+   return useMutation({
+-    mutationFn: ({ macAddress, updates }: { macAddress: string; updates: any }) => 
+-      updateDevice(macAddress, updates),
++    mutationFn: ({ macAddress, updates }: { macAddress: string; updates: NetworkAPI.DeviceUpdate }) => {
++      return unifiedApiClient.updateDevice(macAddress, updates);
++    },
+     onSuccess: (data, variables) => {
+       queryClient.invalidateQueries({ queryKey: ['devices'] });
+       queryClient.invalidateQueries({ queryKey: ['device', variables.macAddress] });
++      logger.info('Device updated successfully', { macAddress: variables.macAddress });
+     },
+     onError: (error) => {
+-      console.error('Update device error:', error);
++      logger.error('Failed to update device', { error: (error as Error).message });
+     }
+   });
+ };
 
-export const useWakeDevice = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: async (macAddress: string) => {
-      // In production, implement actual Wake-on-LAN
-      logger.info(`Wake-on-LAN sent to ${macAddress}`);
-      
-      // Update device status
-      const result = await databaseService.updateNetworkDevice(macAddress, {
-        is_active: true,
-        last_seen: new Date().toISOString()
-      });
-      
-      return {
-        success: true,
-        message: 'Wake on LAN packet sent'
-      };
-    },
-    onSuccess: (data, macAddress) => {
-      queryClient.invalidateQueries({ queryKey: ['devices'] });
-      queryClient.invalidateQueries({ queryKey: ['device', macAddress] });
-    },
-    onError: (error) => {
-      logger.error('Wake device error:', error);
-    }
-  });
-};
+ export const useDeleteDevice = () => {
+   const queryClient = useQueryClient();
+   
+   return useMutation({
+-    mutationFn: deleteDevice,
++    mutationFn: (macAddress: string) => unifiedApiClient.deleteDevice(macAddress),
+     onSuccess: () => {
+       queryClient.invalidateQueries({ queryKey: ['devices'] });
++      logger.info('Device deleted successfully');
+     },
+     onError: (error) => {
+-      console.error('Delete device error:', error);
++      logger.error('Failed to delete device', { error: (error as Error).message });
+     }
+   });
+ };
 
-export const useDiscoverDevices = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: async () => {
-      try {
-        // Real network discovery implementation would go here
-        // For now, simulate discovery
-        logger.info('Starting network device discovery');
-        await new Promise(resolve => setTimeout(resolve, 3000));
-        
-        // In production, this would scan the network and update the database
-        return { success: true, discovered: Math.floor(Math.random() * 5) + 1 };
-      } catch (error) {
-        logger.error('Device discovery failed:', error);
-        throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['devices'] });
-    },
-    onError: (error) => {
-      logger.error('Device discovery error:', error);
-    }
-  });
-};
+ export const useWakeDevice = () => {
+   return useMutation({
+-    mutationFn: wakeDevice,
++    mutationFn: (macAddress: string) => unifiedApiClient.wakeDevice(macAddress),
+     onError: (error) => {
+-      console.error('Wake device error:', error);
++      logger.error('Failed to wake device', { error: (error as Error).message });
+     }
+   });
+ };
+
++// Device discovery hook
++export const useDiscoverDevices = () => {
++  const queryClient = useQueryClient();
++  
++  return useMutation({
++    mutationFn: () => unifiedApiClient.discoverDevices(),
++    onSuccess: (data) => {
++      queryClient.invalidateQueries({ queryKey: ['devices'] });
++      logger.info('Device discovery completed', {
++        discovered: data.data?.discovered || 0
++      });
++    },
++    onError: (error) => {
++      logger.error('Device discovery failed', { error: (error as Error).message });
++    }
++  });
++};
