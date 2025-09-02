@@ -11,11 +11,51 @@ import { WiFiAccessPointManagement } from './WiFiAccessPointManagement';
 import { WiFiSecurityManagement } from './WiFiSecurityManagement';
 import { WiFiPerformanceMonitoring } from './WiFiPerformanceMonitoring';
 import { 
-  useWiFiStats, 
-  useWiFiHealthCheck, 
-  useApplyWiFiConfiguration,
-  useRestartWiFiService
-} from '../../hooks/api/useWiFi';
+  wifiService
+} from '../../services/wifiService';
+
+// Mock hooks until Supabase is connected
+const useWiFiStats = () => {
+  const [data, setData] = React.useState({
+    total_access_points: 2,
+    online_access_points: 2,
+    total_networks: 3,
+    active_networks: 2,
+    total_clients: 15,
+    connected_clients: 11,
+    total_bandwidth_mbps: 167.5,
+    average_signal_strength: -58,
+    channel_utilization: [],
+    client_distribution: []
+  });
+  return { data, isLoading: false };
+};
+
+const useWiFiHealthCheck = () => {
+  const [data, setData] = React.useState({
+    overall_health: 'healthy',
+    issues: [],
+    recommendations: [
+      'Kanal 6 ve 11 arasında optimizasyon yapılabilir',
+      '5GHz bandında daha fazla kanal kullanımı önerilir'
+    ]
+  });
+  return { data };
+};
+
+const useApplyWiFiConfiguration = () => {
+  return {
+    mutateAsync: async () => ({ success: true, errors: [] }),
+    isPending: false
+  };
+};
+
+const useRestartWiFiService = () => {
+  return {
+    mutateAsync: async () => ({ success: true }),
+    isPending: false
+  };
+};
 
 const WiFiManagement: React.FC = () => {
   const [activeTab, setActiveTab] = useState('networks');

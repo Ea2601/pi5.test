@@ -197,6 +197,56 @@ app.get('/api/v1/network/wifi/stats', (req, res) => {
   }
 });
 
+// System information endpoint
+app.get('/api/v1/system/info', (req, res) => {
+  try {
+    const systemInfo = {
+      version: '2.1.4',
+      platform: 'Raspberry Pi 5',
+      node_version: process.version,
+      uptime: process.uptime(),
+      memory_usage: process.memoryUsage(),
+      environment: process.env.NODE_ENV || 'development',
+      services: {
+        api_gateway: { status: 'running', port: 3000 },
+        database: { status: 'disconnected', type: 'supabase' },
+        cache: { status: 'disconnected', type: 'redis' }
+      }
+    };
+    
+    res.json(systemInfo);
+  } catch (error) {
+    console.error('Error fetching system info:', error);
+    res.status(500).json({ error: 'Failed to fetch system info' });
+  }
+});
+
+// Configuration endpoints
+app.get('/api/v1/system/config', (req, res) => {
+  try {
+    const config = {
+      database_configured: !!(process.env.VITE_SUPABASE_URL && process.env.VITE_SUPABASE_ANON_KEY),
+      services_running: ['api-gateway'],
+      required_env_vars: [
+        'VITE_SUPABASE_URL',
+        'VITE_SUPABASE_ANON_KEY',
+        'JWT_SECRET',
+        'POSTGRES_PASSWORD'
+      ],
+      optional_env_vars: [
+        'TELEGRAM_BOT_TOKEN',
+        'WEBHOOK_BASE_URL',
+        'GRAFANA_PASSWORD'
+      ]
+    };
+    
+    res.json(config);
+  } catch (error) {
+    console.error('Error fetching system config:', error);
+    res.status(500).json({ error: 'Failed to fetch system config' });
+  }
+});
+
 // DNS Stats endpoint
 app.get('/api/v1/network/dns/stats', (req, res) => {
   try {

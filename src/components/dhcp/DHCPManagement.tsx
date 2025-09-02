@@ -7,7 +7,52 @@ import { cn } from '../../lib/utils';
 import { DHCPPoolManagement } from './DHCPPoolManagement';
 import { DHCPReservationManagement } from './DHCPReservationManagement';
 import { DHCPLeaseManagement } from './DHCPLeaseManagement';
-import { useDHCPStats, useApplyDHCPConfiguration, useDiscoverDHCPServers } from '../../hooks/api/useDHCP';
+import { dhcpService } from '../../services/dhcpService';
+
+// Mock hooks until Supabase is connected
+const useDHCPStats = () => {
+  const [data, setData] = React.useState({
+    total_pools: 3,
+    active_pools: 2,
+    total_leases: 25,
+    active_leases: 18,
+    expired_leases: 7,
+    total_reservations: 5,
+    active_reservations: 5,
+    pool_utilization: [
+      {
+        pool_name: 'Admin Network',
+        vlan_id: 10,
+        total_ips: 100,
+        used_ips: 12,
+        utilization_percent: 12
+      },
+      {
+        pool_name: 'IoT Network',
+        vlan_id: 30,
+        total_ips: 100,
+        used_ips: 6,
+        utilization_percent: 6
+      }
+    ],
+    recent_activity: []
+  });
+  return { data, isLoading: false };
+};
+
+const useApplyDHCPConfiguration = () => {
+  return {
+    mutateAsync: async () => ({ success: true, errors: [] }),
+    isPending: false
+  };
+};
+
+const useDiscoverDHCPServers = () => {
+  return {
+    mutateAsync: async () => [],
+    isPending: false
+  };
+};
 
 const DHCPManagement: React.FC = () => {
   const [activeTab, setActiveTab] = useState('pools');

@@ -8,7 +8,56 @@ import { ChartCard } from '../cards/ChartCard';
 import { cn } from '../../lib/utils';
 import { DNSServerManagement } from './DNSServerManagement';
 import { DNSProfileManagement } from './DNSProfileManagement';
-import { useDNSStats, useDNSHealthCheck, useApplyDNSConfiguration, useFlushDNSCache } from '../../hooks/api/useDNS';
+import { dnsService } from '../../services/dnsService';
+
+// Mock hooks until Supabase is connected
+const useDNSStats = (timeRange: string) => {
+  const [data, setData] = React.useState({
+    total_queries: 5420,
+    blocked_queries: 1250,
+    cache_hit_ratio: 0.85,
+    average_response_time: 18,
+    top_domains: [
+      { domain: 'google.com', count: 120 },
+      { domain: 'youtube.com', count: 95 },
+      { domain: 'github.com', count: 78 }
+    ],
+    top_blocked_domains: [
+      { domain: 'ads.example.com', count: 45 },
+      { domain: 'tracker.bad.com', count: 32 }
+    ],
+    queries_by_type: { A: 4200, AAAA: 800, CNAME: 320, MX: 100 },
+    queries_by_device: {}
+  });
+  return { data, isLoading: false };
+};
+
+const useDNSHealthCheck = () => {
+  const [data, setData] = React.useState({
+    overall_health: true,
+    server_health: [
+      { server: 'Cloudflare Primary', healthy: true, response_time: 15, error: null },
+      { server: 'Google DNS', healthy: true, response_time: 22, error: null }
+    ],
+    total_servers: 2,
+    active_servers: 2
+  });
+  return { data };
+};
+
+const useApplyDNSConfiguration = () => {
+  return {
+    mutateAsync: async () => ({ success: true, errors: [] }),
+    isPending: false
+  };
+};
+
+const useFlushDNSCache = () => {
+  return {
+    mutateAsync: async () => true,
+    isPending: false
+  };
+};
 
 const DNSManagement: React.FC = () => {
   const [activeTab, setActiveTab] = useState('servers');
