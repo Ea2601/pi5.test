@@ -15,6 +15,7 @@ export default defineConfig({
         rewrite: (path) => path
       }
     }
+  }
   define: {
     global: 'globalThis',
   },
