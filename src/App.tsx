@@ -37,58 +37,6 @@ const LoadingSpinner: React.FC = () => (
   </div>
 );
 
-// Error Boundary Component
-class ErrorBoundary extends React.Component<
-  { children: React.ReactNode },
-  { hasError: boolean; error?: Error }
-> {
-  state = { hasError: false, error: undefined };
-
-  static getDerivedStateFromError(error: Error) {
-    return { hasError: true, error };
-  }
-
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('UI Error Boundary caught error:', error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          height: '50vh', 
-          padding: '24px',
-          color: 'white'
-        }}>
-          <div style={{ textAlign: 'center' }}>
-            <h2 style={{ fontSize: '24px', marginBottom: '16px' }}>Bir şeyler ters gitti</h2>
-            <p style={{ marginBottom: '24px', opacity: 0.7 }}>
-              Sayfa yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              style={{
-                padding: '8px 16px',
-                background: 'rgba(0, 163, 108, 0.2)',
-                border: '1px solid rgba(0, 163, 108, 0.3)',
-                borderRadius: '8px',
-                color: 'rgb(52, 211, 153)',
-                cursor: 'pointer'
-              }}
-            >
-              Sayfayı Yenile
-            </button>
-          </div>
-        </div>
-      );
-    }
-    return this.props.children;
-  }
-}
-
 // Placeholder component for unimplemented views
 const PlaceholderView: React.FC<{ title: string; description: string }> = ({ title, description }) => (
   <div className="flex items-center justify-center h-96">
