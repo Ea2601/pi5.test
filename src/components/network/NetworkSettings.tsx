@@ -1021,3 +1021,5 @@ export const NetworkSettings: React.FC = () => {
     </div>
   );
 };
+
+export default NetworkSettings
