@@ -1,13 +1,13 @@
 {
-  "name": "pi5-supernode-api-gateway",
-  "version": "2.1.4",
-  "description": "Pi5 Supernode API Gateway Service",
+  "name": "api-gateway",
+  "version": "1.0.0",
+  "description": "Pi5 Supernode API Gateway",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "type-check": "tsc --noEmit"
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "express": "^4.18.2",
