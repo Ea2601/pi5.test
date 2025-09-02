@@ -11,13 +11,17 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
-      - ./database/seeds:/docker-entrypoint-initdb.d/seeds
     ports:
       - "5432:5432"
     networks:
       - pi5-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d pi5_supernode"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   # Redis Cache
   redis:
@@ -31,28 +35,36 @@ services:
     networks:
       - pi5-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
 
   # API Gateway
   api-gateway:
-    build:
-      context: ./backend/api-gateway
-      dockerfile: Dockerfile
+    image: node:18-alpine
     container_name: pi5-api-gateway
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
     environment:
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/pi5_supernode
       REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key}
       NODE_ENV: ${NODE_ENV:-development}
+      API_GATEWAY_PORT: 3000
     ports:
       - "3000:3000"
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - pi5-network
     restart: unless-stopped
     volumes:
-      - ./backend/api-gateway/logs:/app/logs
 
   # Network Management Service
   network-service:
