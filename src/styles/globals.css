@@ -163,11 +163,21 @@
   .button > *,
   .cta-button > * {
     white-space: nowrap;
+    pointer-events: none;
   }
 }
 
 /* Utility layer enhancements */
 @layer utilities {
+  .clickable {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+  }
+  
+  .non-clickable {
+    pointer-events: none !important;
+  }
+  
   .text-balance {
     text-wrap: balance;
   }

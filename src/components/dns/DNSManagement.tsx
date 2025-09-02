@@ -54,7 +54,10 @@ const useApplyDNSConfiguration = () => {
 
 const useFlushDNSCache = () => {
   return {
-    mutateAsync: async () => true,
+    mutateAsync: async () => {
+      console.log('DNS cache flushed');
+      return true;
+    },
     isPending: false
   };
 };
@@ -80,9 +83,9 @@ const DNSManagement: React.FC = () => {
     try {
       const result = await applyConfigMutation.mutateAsync();
       if (result.success) {
-        alert('DNS yapılandırması başarıyla uygulandı');
+        console.log('DNS yapılandırması başarıyla uygulandı');
       } else {
-        alert(`Yapılandırma hatası: ${result.errors.join(', ')}`);
+        console.error(`Yapılandırma hatası: ${result.errors.join(', ')}`);
       }
     } catch (error) {
       console.error('Apply configuration error:', error);
@@ -93,9 +96,9 @@ const DNSManagement: React.FC = () => {
     try {
       const success = await flushCacheMutation.mutateAsync();
       if (success) {
-        alert('DNS önbelleği temizlendi');
+        console.log('DNS önbelleği temizlendi');
       } else {
-        alert('Önbellek temizleme başarısız');
+        console.error('Önbellek temizleme başarısız');
       }
     } catch (error) {
       console.error('Flush cache error:', error);

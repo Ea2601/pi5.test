@@ -100,7 +100,8 @@ export const ServerManagement: React.FC = () => {
   };
 
   const handleDeleteServer = async (id: string) => {
-    if (confirm('Bu sunucuyu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')) {
+    const confirmed = window.confirm('Bu sunucuyu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.');
+    if (confirmed) {
       try {
         await deleteServerMutation.mutateAsync(id);
       } catch (error) {

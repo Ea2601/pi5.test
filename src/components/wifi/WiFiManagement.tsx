@@ -78,9 +78,9 @@ const WiFiManagement: React.FC = () => {
     try {
       const result = await applyConfigMutation.mutateAsync();
       if (result.success) {
-        alert('Wi-Fi yapılandırması başarıyla uygulandı');
+        console.log('Wi-Fi yapılandırması başarıyla uygulandı');
       } else {
-        alert(`Yapılandırma hatası: ${result.errors.join(', ')}`);
+        console.error(`Yapılandırma hatası: ${result.errors.join(', ')}`);
       }
     } catch (error) {
       console.error('Apply WiFi configuration error:', error);
@@ -88,10 +88,11 @@ const WiFiManagement: React.FC = () => {
   };
 
   const handleRestartService = async () => {
-    if (confirm('Tüm Wi-Fi servislerini yeniden başlatmak istediğinizden emin misiniz?')) {
+    const confirmed = window.confirm('Tüm Wi-Fi servislerini yeniden başlatmak istediğinizden emin misiniz?');
+    if (confirmed) {
       try {
         await restartServiceMutation.mutateAsync();
-        alert('Wi-Fi servisleri yeniden başlatıldı');
+        console.log('Wi-Fi servisleri yeniden başlatıldı');
       } catch (error) {
         console.error('Restart WiFi service error:', error);
       }

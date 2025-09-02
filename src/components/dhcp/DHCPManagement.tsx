@@ -74,9 +74,9 @@ const DHCPManagement: React.FC = () => {
     try {
       const result = await applyConfigMutation.mutateAsync();
       if (result.success) {
-        alert('DHCP yapılandırması başarıyla uygulandı');
+        console.log('DHCP yapılandırması başarıyla uygulandı');
       } else {
-        alert(`Yapılandırma hatası: ${result.errors.join(', ')}`);
+        console.error(`Yapılandırma hatası: ${result.errors.join(', ')}`);
       }
     } catch (error) {
       console.error('Apply DHCP configuration error:', error);
@@ -87,7 +87,7 @@ const DHCPManagement: React.FC = () => {
     try {
       const servers = await discoverServersMutation.mutateAsync();
       console.log('Discovered DHCP servers:', servers);
-      alert(`${servers.length} DHCP sunucusu bulundu`);
+      console.log(`${servers.length} DHCP sunucusu bulundu`);
     } catch (error) {
       console.error('Discover DHCP servers error:', error);
     }

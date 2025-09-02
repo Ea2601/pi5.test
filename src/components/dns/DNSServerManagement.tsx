@@ -113,11 +113,20 @@ export const DNSServerManagement: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 pt-3 border-t border-white/10">
-            <Button size="sm" variant="outline" className="flex-1">
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="flex-1"
+              onClick={() => console.log('Testing DNS server:', server.ip_address)}
+            >
               <Icons.TestTube className="w-3 h-3 mr-1" />
               Test
             </Button>
-            <Button size="sm" variant="outline">
+            <Button 
+              size="sm" 
+              variant="outline"
+              onClick={() => console.log('Editing DNS server:', server.id)}
+            >
               <Icons.Edit className="w-3 h-3" />
             </Button>
           </div>

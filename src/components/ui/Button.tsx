@@ -82,7 +82,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           fullWidth && 'w-full',
           className
         )}
-        onClick={!isDisabled ? onClick : undefined}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!isDisabled && onClick) {
+            onClick();
+          }
+        }}
         disabled={isDisabled}
         style={{
           textShadow: variant === 'default' ? '0 0 8px rgba(0, 163, 108, 0.6)' : 'none'

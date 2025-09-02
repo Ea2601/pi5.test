@@ -100,7 +100,8 @@ export const ClientManagement: React.FC = () => {
   };
 
   const handleDeleteClient = async (id: string) => {
-    if (confirm('Bu istemciyi silmek istediğinizden emin misiniz?')) {
+    const confirmed = window.confirm('Bu istemciyi silmek istediğinizden emin misiniz?');
+    if (confirmed) {
       try {
         await deleteClientMutation.mutateAsync(id);
       } catch (error) {

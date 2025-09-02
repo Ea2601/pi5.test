@@ -138,11 +138,20 @@ export const DHCPPoolManagement: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 pt-3 border-t border-white/10">
-            <Button size="sm" variant="outline" className="flex-1">
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="flex-1"
+              onClick={() => console.log('Editing DHCP pool:', pool.id)}
+            >
               <Icons.Edit className="w-3 h-3 mr-1" />
               Düzenle
             </Button>
-            <Button size="sm" variant={pool.is_active ? "destructive" : "default"}>
+            <Button 
+              size="sm" 
+              variant={pool.is_active ? "destructive" : "default"}
+              onClick={() => console.log('Toggling DHCP pool:', pool.id, !pool.is_active)}
+            >
               {pool.is_active ? <Icons.Pause className="w-3 h-3" /> : <Icons.Play className="w-3 h-3" />}
             </Button>
           </div>
