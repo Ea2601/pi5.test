@@ -14,25 +14,19 @@ import WiFiManagement from '../wifi/WiFiManagement';
 import SpeedTestManagement from '../speedTest/SpeedTestManagement';
 import NetworkSettings from '../network/NetworkSettings';
 
-interface TabConfig {
-  id: string;
-  label: string;
-  icon: React.ElementType;
-}
-
-const tabs: TabConfig[] = [
-  { id: 'dns', label: 'DNS', icon: Icons.Globe },
-  { id: 'dhcp', label: 'DHCP', icon: Icons.Network },
-  { id: 'wifi', label: 'WiFi', icon: Icons.Wifi },
-  { id: 'settings', label: 'Ağ Ayarları', icon: Icons.Settings },
-  { id: 'traffic', label: 'Trafik Kuralları', icon: Icons.Shield },
-  { id: 'speedtest', label: 'Hız Testi', icon: Icons.Zap },
-  { id: 'topology', label: 'Ağ Topolojisi', icon: Icons.Network }
-];
 
 const Network: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dns');
 
+  const tabs = [
+    { id: 'dns', label: 'DNS', icon: 'Globe' },
+    { id: 'dhcp', label: 'DHCP', icon: 'Network' },
+    { id: 'wifi', label: 'WiFi', icon: 'Wifi' },
+    { id: 'settings', label: 'Ağ Ayarları', icon: 'Settings' },
+    { id: 'traffic', label: 'Trafik Kuralları', icon: 'Shield' },
+    { id: 'speedtest', label: 'Hız Testi', icon: 'Zap' },
+    { id: 'topology', label: 'Ağ Topolojisi', icon: 'GitBranch' }
+  ];
   const renderTabContent = () => {
     switch (activeTab) {
       case 'dns':
@@ -61,34 +55,37 @@ const Network: React.FC = () => {
         description="DNS, DHCP, WiFi ve ağ topolojisi yönetimi"
       />
       
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Ağ Yönetimi
-        </h1>
+        <div>
+          <h1 className="text-2xl font-bold text-white">Ağ Yönetimi</h1>
+          <p className="text-white/70 mt-1">DNS, DHCP, WiFi ve ağ topolojisi yönetimi</p>
+        </div>
       </div>
 
-      {/* Tab Navigation */}
-      <div className="border-b border-gray-200 dark:border-gray-700">
-        <nav className="-mb-px flex space-x-8">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={cn(
-                  'flex items-center space-x-2 py-2 px-1 border-b-2 font-medium text-sm transition-colors',
-                  activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
-                )}
-              >
-                <Icon className="w-4 h-4" />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
-        </nav>
+      {/* Tabs */}
+      <div className="flex space-x-1 bg-white/5 p-1 rounded-2xl backdrop-blur-sm border border-white/10 overflow-x-auto">
+        {tabs.map((tab) => {
+          const IconComponent = Icons[tab.icon as keyof typeof Icons] as React.ComponentType<any>;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={cn(
+                "relative flex items-center gap-2 px-4 py-3 rounded-xl transition-all duration-300 font-medium whitespace-nowrap",
+                activeTab === tab.id
+                  ? "bg-emerald-500/20 text-white border border-emerald-500/30 shadow-lg shadow-emerald-500/20"
+                  : "text-white/70 hover:text-white hover:bg-white/10 hover:shadow-lg hover:shadow-white/10 border border-transparent hover:border-white/20"
+              )}
+              style={{
+                textShadow: activeTab === tab.id ? '0 0 8px rgba(0, 163, 108, 0.6)' : 'none'
+              }}
+            >
+              <IconComponent className="w-4 h-4" />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Tab Content */}
