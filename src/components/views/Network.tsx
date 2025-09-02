@@ -22,8 +22,43 @@ interface TabConfig {
 const tabs: TabConfig[] = [
   { id: 'dns', label: 'DNS', icon: Icons.Globe },
   { id: 'dhcp', label: 'DHCP', icon: Icons.Network },
-          <NetworkSettings />
+  { id: 'settings', label: 'Network Settings', icon: Icons.Settings },
   { id: 'topology', label: 'Ağ Topolojisi', icon: Icons.Network },
+];
+
+const Network: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('dns');
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'dns':
+        return <DNSManagement />;
+      case 'dhcp':
+        return <DHCPManagement />;
+      case 'settings':
+        return <NetworkSettings />;
+      case 'topology':
+        return <NetworkTopology />;
+      default:
+        return <DNSManagement />;
+    }
+  };
+
+  return (
+    <div>
+      <div>
+        {tabs.map((tab) => (
+          <Button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={cn(
+              activeTab === tab.id ? 'active' : ''
+            )}
+          >
+            <tab.icon />
+            {tab.label}
+          </Button>
+        ))}
       </div>
 
       {/* Tab Content */}
