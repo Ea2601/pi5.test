@@ -1,5 +1,5 @@
 // Unified Frontend API Client - Replaces All Individual API Clients
-import { UnifiedApiClient, ApiResponse } from '../shared/utils/apiClient';
+import { UnifiedApiClient, ApiResponse } from '@shared/utils/apiClient';
 
 interface NetworkDevice {
   mac_address: string;
