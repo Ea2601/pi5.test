@@ -11,7 +11,6 @@ import DHCPManagement from '../dhcp/DHCPManagement';
 import NetworkTopology from '../topology/NetworkTopology';
 import WiFiManagement from '../wifi/WiFiManagement';
 import SpeedTestManagement from '../speedTest/SpeedTestManagement';
-import NetworkSettings from '../network/NetworkSettings';
 
 interface TabConfig {
   id: string;
@@ -22,8 +21,10 @@ interface TabConfig {
 const tabs: TabConfig[] = [
   { id: 'dns', label: 'DNS', icon: Icons.Globe },
   { id: 'dhcp', label: 'DHCP', icon: Icons.Network },
-  { id: 'settings', label: 'Network Settings', icon: Icons.Settings },
-  { id: 'topology', label: 'Ağ Topolojisi', icon: Icons.Network },
+  { id: 'wifi', label: 'WiFi', icon: Icons.Wifi },
+  { id: 'traffic', label: 'Trafik Kuralları', icon: Icons.Shield },
+  { id: 'speedtest', label: 'Hız Testi', icon: Icons.Zap },
+  { id: 'topology', label: 'Ağ Topolojisi', icon: Icons.Network }
 ];
 
 const Network: React.FC = () => {
@@ -35,8 +36,12 @@ const Network: React.FC = () => {
         return <DNSManagement />;
       case 'dhcp':
         return <DHCPManagement />;
-      case 'settings':
-        return <NetworkSettings />;
+      case 'wifi':
+        return <WiFiManagement />;
+      case 'traffic':
+        return <TrafficRuleManager />;
+      case 'speedtest':
+        return <SpeedTestManagement />;
       case 'topology':
         return <NetworkTopology />;
       default:
@@ -45,20 +50,40 @@ const Network: React.FC = () => {
   };
 
   return (
-    <div>
-      <div>
-        {tabs.map((tab) => (
-          <Button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={cn(
-              activeTab === tab.id ? 'active' : ''
-            )}
-          >
-            <tab.icon />
-            {tab.label}
-          </Button>
-        ))}
+    <div className="space-y-6">
+      <SEOMeta 
+        title="Ağ Yönetimi"
+        description="DNS, DHCP, WiFi ve ağ topolojisi yönetimi"
+      />
+      
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          Ağ Yönetimi
+        </h1>
+      </div>
+
+      {/* Tab Navigation */}
+      <div className="border-b border-gray-200 dark:border-gray-700">
+        <nav className="-mb-px flex space-x-8">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={cn(
+                  'flex items-center space-x-2 py-2 px-1 border-b-2 font-medium text-sm transition-colors',
+                  activeTab === tab.id
+                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                )}
+              >
+                <Icon className="w-4 h-4" />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </nav>
       </div>
 
       {/* Tab Content */}
