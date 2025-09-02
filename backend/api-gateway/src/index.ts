@@ -8,6 +8,20 @@ const PORT = process.env.API_GATEWAY_PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+// Root endpoint - Frontend için
+app.get('/', (req: express.Request, res: express.Response) => {
+  res.json({ 
+    message: 'Pi5 Supernode API Gateway',
+    version: '2.1.4',
+    status: 'running',
+    endpoints: {
+      health: '/health',
+      api: '/api/v1/*'
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Health check endpoint
 app.get('/health', (req: express.Request, res: express.Response) => {
   res.json({ 

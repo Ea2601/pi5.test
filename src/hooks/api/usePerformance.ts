@@ -5,12 +5,25 @@ export const useSystemMetrics = () => {
   return useQuery({
     queryKey: ['system-metrics'],
     queryFn: async () => {
-      const response = await unifiedApiClient.getSystemMetrics();
-      return response.data;
+      try {
+        const response = await unifiedApiClient.getSystemMetrics();
+        return response.data;
+      } catch (error) {
+        console.warn('System metrics temporarily unavailable:', error);
+        return {
+          cpu: 0,
+          memory: 0,
+          disk: 0,
+          network: { upload: 0, download: 0 },
+          temperature: 0,
+          uptime: 0
+        };
+      }
     },
     refetchInterval: 5000, // Update every 5 seconds
     staleTime: 2000,
-    retry: 1
+    retry: 1,
+    retryOnMount: false
   });
 };
 

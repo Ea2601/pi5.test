@@ -6,6 +6,7 @@ import { SEOMeta } from './components/SEO/SEOMeta';
 import { useAppStore } from './store';
 import { cn } from './lib/utils';
 import { useAccessibility } from './hooks/ui/useAccessibility';
+import { ErrorBoundary } from './components/ui/ErrorBoundary';
 
 // Lazy load views for better performance
 const Dashboard = React.lazy(() => import('./components/views/Dashboard'));
@@ -217,7 +218,7 @@ function App() {
             }}
           >
             <div className="p-4 md:p-6">
-              <ErrorBoundary key={currentView}>
+              <ErrorBoundary>
                 <Suspense fallback={<LoadingSpinner />}>
                   {renderView()}
                 </Suspense>
