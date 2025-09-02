@@ -197,6 +197,84 @@ app.get('/api/v1/network/wifi/stats', (req, res) => {
   }
 });
 
+// Network Settings endpoints
+app.get('/api/v1/network/settings/interfaces', (req, res) => {
+  try {
+    const interfaces = [
+      {
+        name: 'eth0',
+        type: 'ethernet',
+        status: 'up',
+        ip_address: '192.168.1.100',
+        mac_address: '00:11:22:33:44:55',
+        mtu: 1500,
+        speed: '1000 Mbps'
+      },
+      {
+        name: 'wlan0',
+        type: 'wifi',
+        status: 'up',
+        ip_address: '192.168.1.101',
+        mac_address: '00:11:22:33:44:56',
+        mtu: 1500,
+        speed: '866 Mbps'
+      }
+    ];
+    
+    res.json(interfaces);
+  } catch (error) {
+    console.error('Error fetching network interfaces:', error);
+    res.status(500).json({ error: 'Failed to fetch network interfaces' });
+  }
+});
+
+app.get('/api/v1/network/settings/firewall', (req, res) => {
+  try {
+    const rules = [
+      {
+        id: 'fw-1',
+        name: 'SSH Access',
+        action: 'allow',
+        protocol: 'tcp',
+        source: '192.168.1.0/24',
+        destination: 'any',
+        port: '22',
+        enabled: true
+      }
+    ];
+    
+    res.json(rules);
+  } catch (error) {
+    console.error('Error fetching firewall rules:', error);
+    res.status(500).json({ error: 'Failed to fetch firewall rules' });
+  }
+});
+
+app.get('/api/v1/network/settings/routing', (req, res) => {
+  try {
+    const routes = [
+      {
+        id: 'route-1',
+        destination: '0.0.0.0/0',
+        gateway: '192.168.1.1',
+        interface: 'eth0',
+        metric: 100,
+        enabled: true
+      }
+    ];
+    
+    res.json(routes);
+  } catch (error) {
+    console.error('Error fetching routing rules:', error);
+    res.status(500).json({ error: 'Failed to fetch routing rules' });
+  }
+});
+
+// Network configuration apply endpoint
+app.post('/api/v1/network/settings/apply', (req, res) => {
+  res.json({ success: true, message: 'Network settings applied successfully', errors: [] });
+});
+
 // System information endpoint
 app.get('/api/v1/system/info', (req, res) => {
   try {
