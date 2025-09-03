@@ -1,10 +1,10 @@
 import React, { Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
-import { ModularNavigation } from './components/layout/ModularNavigation';
-import { ModularDashboard } from './components/layout/ModularDashboard';
+import { Navigation } from './components/layout/Navigation';
 import { SEOMeta } from './components/SEO/SEOMeta';
 import { useAppStore } from './store';
+import { moduleManager } from './core/ModuleManager';
 import { moduleRegistry } from './core/ModuleRegistry';
 import { cn } from './lib/utils';
 import { useAccessibility } from './hooks/ui/useAccessibility';
@@ -19,6 +19,14 @@ const Automations = React.lazy(() => import('./components/views/Automations'));
 const Observability = React.lazy(() => import('./components/views/Observability'));
 const Settings = React.lazy(() => import('./components/views/Settings'));
 const Storage = React.lazy(() => import('./components/views/Storage'));
+
+// Import modular components
+const NetworkModule = React.lazy(() => import('./modules/NetworkModule'));
+const VPNModule = React.lazy(() => import('./modules/VPNModule'));
+const AutomationModule = React.lazy(() => import('./modules/AutomationModule'));
+const StorageModule = React.lazy(() => import('./modules/StorageModule'));
+const MonitoringModule = React.lazy(() => import('./modules/MonitoringModule'));
+const SystemSettingsModule = React.lazy(() => import('./modules/SystemSettingsModule'));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -52,42 +60,90 @@ const PlaceholderView: React.FC<{ title: string; description: string }> = ({ tit
 function App() {
   const { currentView, isMenuCollapsed } = useAppStore();
   const { isReducedMotion } = useAccessibility();
+  const [isModularSystemReady, setIsModularSystemReady] = React.useState(false);
 
   // Initialize module system
   React.useEffect(() => {
-    moduleRegistry.initialize().catch(error => {
-      console.error('Failed to initialize module registry:', error);
-    });
+    const initializeModularSystem = async () => {
+      try {
+        await moduleRegistry.initialize();
+        await moduleManager.initializeCoreModules();
+        
+        // Make module manager globally available
+        (window as any).moduleManager = moduleManager;
+        
+        setIsModularSystemReady(true);
+      } catch (error) {
+        console.error('Failed to initialize modular system:', error);
+        setIsModularSystemReady(true); // Continue with fallback
+      }
+    };
+
+    initializeModularSystem();
   }, []);
 
   const renderView = () => {
+    // If modular system is ready, use modular components
+    if (isModularSystemReady) {
+      return renderModularView();
+    }
+    
+    // Fallback to original components during loading
+    return renderFallbackView();
+  };
+
+  const renderModularView = () => {
+    try {
+      switch (currentView) {
+        case 'dashboard':
+          return <Dashboard />;
+        case 'devices':
+          return <ModularComponent moduleId="device-management" />;
+        case 'network':
+          return <ModularComponent moduleId="network-management" />;
+        case 'vpn':
+          return <ModularComponent moduleId="vpn-management" />;
+        case 'automations':
+          return <ModularComponent moduleId="automation-engine" />;
+        case 'observability':
+          return <ModularComponent moduleId="monitoring-dashboard" />;
+        case 'storage':
+          return <ModularComponent moduleId="storage-management" />;
+        case 'nvr':
+          return <PlaceholderView title="Ağ Video Kaydedici" description="Frigate video yönetimi ve güvenlik kameraları" />;
+        case 'ai':
+          return <PlaceholderView title="Yapay Zeka Asistanı" description="Akıllı ağ yardımı ve otomasyon" />;
+        case 'settings':
+          return <ModularComponent moduleId="system-settings" fallback={<Settings />} />;
+        default:
+          return <Dashboard />;
+      }
+    } catch (error) {
+      console.error('Modular view error:', error);
+      return renderFallbackView();
+    }
+  };
+
+  const renderFallbackView = () => {
     switch (currentView) {
       case 'dashboard':
-        return (
-          <ModularDashboard />
-        );
+        return <Dashboard />;
       case 'devices':
-        return <ModularModuleRenderer moduleId="device-management" />;
+        return <Devices />;
       case 'network':
-        return <ModularModuleRenderer moduleId="network-management" />;
+        return <Network />;
       case 'vpn':
-        return <ModularModuleRenderer moduleId="vpn-management" />;
+        return <VPN />;
       case 'automations':
-        return <ModularModuleRenderer moduleId="automation-engine" />;
+        return <Automations />;
       case 'observability':
-        return <ModularModuleRenderer moduleId="monitoring-dashboard" />;
+        return <Observability />;
       case 'storage':
-        return <ModularModuleRenderer moduleId="storage-management" />;
-      case 'nvr':
-        return <PlaceholderView title="Ağ Video Kaydedici" description="Frigate video yönetimi ve güvenlik kameraları" />;
-      case 'ai':
-        return <PlaceholderView title="Yapay Zeka Asistanı" description="Akıllı ağ yardımı ve otomasyon" />;
+        return <Storage />;
       case 'settings':
-        return <ModularModuleRenderer moduleId="system-settings" fallback={<Settings />} />;
+        return <Settings />;
       default:
-        return (
-          <ModularDashboard />
-        );
+        return <Dashboard />;
     }
   };
 
@@ -147,7 +203,7 @@ function App() {
           </div>
 
           {/* Navigation */}
-          <ModularNavigation />
+          <Navigation />
 
           {/* Main Content */}
           <main 
@@ -174,8 +230,8 @@ function App() {
   );
 }
 
-// Modular Module Renderer Component
-const ModularModuleRenderer: React.FC<{ 
+// Modular Component Renderer
+const ModularComponent: React.FC<{ 
   moduleId: string; 
   fallback?: React.ComponentType<any> 
 }> = ({ moduleId, fallback: Fallback }) => {
@@ -185,7 +241,7 @@ const ModularModuleRenderer: React.FC<{
   React.useEffect(() => {
     const loadModule = async () => {
       try {
-        const module = moduleRegistry.moduleManager?.getModule(moduleId);
+        const module = (window as any).moduleManager?.getModule(moduleId);
         if (module) {
           const Component = module.getComponent();
           setModuleComponent(() => Component);
@@ -225,5 +281,15 @@ const ModularModuleRenderer: React.FC<{
   const Component = moduleComponent;
   return <Component />;
 };
+
+// Placeholder component for unimplemented views
+const PlaceholderView: React.FC<{ title: string; description: string }> = ({ title, description }) => (
+  <div className="flex items-center justify-center h-96">
+    <div className="text-center">
+      <h1 className="text-2xl font-bold text-white mb-2">{title}</h1>
+      <p className="text-white/70">{description}</p>
+    </div>
+  </div>
+);
 
 export default App;
