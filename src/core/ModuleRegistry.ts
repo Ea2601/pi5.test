@@ -187,7 +187,8 @@ class ModuleRegistry {
 
     try {
       // Import module class
-      const ModuleClass = await registryEntry.moduleClass();
+      const ModuleImport = await registryEntry.moduleClass();
+      const ModuleClass = ModuleImport.default || ModuleImport;
       const moduleInstance = new ModuleClass.default(registryEntry.manifest);
       
       // Load into module manager

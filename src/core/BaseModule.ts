@@ -100,20 +100,43 @@ export abstract class BaseModule implements ModuleInterface {
   protected async apiCall(endpoint: string, options?: RequestInit): Promise<any> {
     try {
       const response = await fetch(`/api/v1/modules/${this.manifest.id}${endpoint}`, {
-        method: 'GET',
+        method: options?.method || 'GET',
         headers: {
           'Content-Type': 'application/json',
           'X-Module-ID': this.manifest.id,
           'X-Module-Version': this.manifest.version,
+          ...options?.headers,
         },
-        ...options
+        body: options?.body,
+        signal: options?.signal
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      // Check if response has content before parsing JSON
+      let data: any;
+      const contentType = response.headers.get('content-type');
+      
+      if (contentType && contentType.includes('application/json')) {
+        const text = await response.text();
+        if (text.trim()) {
+          try {
+            data = JSON.parse(text);
+          } catch (parseError) {
+            throw new Error(`Invalid JSON response: ${text.slice(0, 100)}`);
+          }
+        } else {
+          data = {}; // Empty JSON response
+        }
+      } else {
+        // Non-JSON response - treat as error
+        const text = await response.text();
+        throw new Error(`Expected JSON response, got: ${contentType}. Content: ${text.slice(0, 200)}`);
       }
 
-      return await response.json();
+      if (!response.ok) {
+        throw new Error(data?.error || `HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      return data;
     } catch (error) {
       this.logger.error(`API call failed: ${endpoint}`, { error: (error as Error).message });
       throw error;

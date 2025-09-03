@@ -211,25 +211,25 @@ class ModuleManager extends EventEmitter {
   private async loadModuleClass(moduleId: string): Promise<any> {
     switch (moduleId) {
       case 'device-management':
-        const DeviceModule = await import('../modules/DeviceModule');
+        const DeviceModule = await import('../modules/DeviceModule.tsx');
         return DeviceModule.default;
       case 'network-management':
-        const NetworkModule = await import('../modules/NetworkModule');
+        const NetworkModule = await import('../modules/NetworkModule.tsx');
         return NetworkModule.default;
       case 'vpn-management':
-        const VPNModule = await import('../modules/VPNModule');
+        const VPNModule = await import('../modules/VPNModule.tsx');
         return VPNModule.default;
       case 'automation-engine':
-        const AutomationModule = await import('../modules/AutomationModule');
+        const AutomationModule = await import('../modules/AutomationModule.tsx');
         return AutomationModule.default;
       case 'storage-management':
-        const StorageModule = await import('../modules/StorageModule');
+        const StorageModule = await import('../modules/StorageModule.tsx');
         return StorageModule.default;
       case 'monitoring-dashboard':
-        const MonitoringModule = await import('../modules/MonitoringModule');
+        const MonitoringModule = await import('../modules/MonitoringModule.tsx');
         return MonitoringModule.default;
       case 'system-settings':
-        const SettingsModule = await import('../modules/SystemSettingsModule');
+        const SettingsModule = await import('../modules/SystemSettingsModule.tsx');
         return SettingsModule.default;
       default:
         throw new Error(`Unknown module: ${moduleId}`);
@@ -246,7 +246,7 @@ class ModuleManager extends EventEmitter {
         category: 'network',
         dependencies: [],
         configSchema: {},
-        entryPoint: 'DeviceModule.tsx',
+        entryPoint: 'DeviceModule',
         tabConfig: {
           label: 'Cihazlar',
           icon: 'Router',
@@ -261,7 +261,7 @@ class ModuleManager extends EventEmitter {
         category: 'network',
         dependencies: [],
         configSchema: {},
-        entryPoint: 'NetworkModule.tsx',
+        entryPoint: 'NetworkModule',
         tabConfig: {
           label: 'Ağ',
           icon: 'Network',
@@ -276,7 +276,7 @@ class ModuleManager extends EventEmitter {
         category: 'security',
         dependencies: [],
         configSchema: {},
-        entryPoint: 'VPNModule.tsx',
+        entryPoint: 'VPNModule',
         tabConfig: {
           label: 'VPN',
           icon: 'Shield',
@@ -291,7 +291,7 @@ class ModuleManager extends EventEmitter {
         category: 'automation',
         dependencies: [],
         configSchema: {},
-        entryPoint: 'AutomationModule.tsx',
+        entryPoint: 'AutomationModule',
         tabConfig: {
           label: 'Otomasyon',
           icon: 'Zap',
@@ -306,7 +306,7 @@ class ModuleManager extends EventEmitter {
         category: 'storage',
         dependencies: [],
         configSchema: {},
-        entryPoint: 'StorageModule.tsx',
+        entryPoint: 'StorageModule',
         tabConfig: {
           label: 'Depolama',
           icon: 'HardDrive',
@@ -321,7 +321,7 @@ class ModuleManager extends EventEmitter {
         category: 'monitoring',
         dependencies: [],
         configSchema: {},
-        entryPoint: 'MonitoringModule.tsx',
+        entryPoint: 'MonitoringModule',
         tabConfig: {
           label: 'İzleme',
           icon: 'Activity',
@@ -336,7 +336,7 @@ class ModuleManager extends EventEmitter {
         category: 'system',
         dependencies: [],
         configSchema: {},
-        entryPoint: 'SystemSettingsModule.tsx',
+        entryPoint: 'SystemSettingsModule',
         tabConfig: {
           label: 'Ayarlar',
           icon: 'Settings',
