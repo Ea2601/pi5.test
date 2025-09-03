@@ -10,7 +10,7 @@ import { BaseModule } from '../core/BaseModule';
 import { communicationBus } from '../core/CommunicationBus';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { MetricCard } from '../cards/MetricCard';
+import { MetricCard } from '../components/cards/MetricCard';
 import { cn, formatBytes } from '../lib/utils';
 
 interface USBDevice {

@@ -193,7 +193,7 @@ class ModuleManager extends EventEmitter {
 
     for (const moduleId of coreModules) {
       try {
-        // Load module if not already loaded
+        const modulePath = `/src/modules/${manifest.component}`;
         if (!this.modules.has(moduleId)) {
           const ModuleClass = await this.loadModuleClass(moduleId);
           const manifest = this.getModuleManifest(moduleId);

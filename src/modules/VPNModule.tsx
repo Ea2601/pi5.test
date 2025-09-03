@@ -12,7 +12,7 @@ import { communicationBus } from '../core/CommunicationBus';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
-import { MetricCard } from '../cards/MetricCard';
+import { MetricCard } from '../components/cards/MetricCard';
 import { cn, formatBytes } from '../lib/utils';
 
 class VPNModuleClass extends BaseModule {
