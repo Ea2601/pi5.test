@@ -128,7 +128,7 @@ interface DevicesResponse extends ApiResponse<NetworkDevice[]> {
 
 class Pi5SupernodeAPIClient extends UnifiedApiClient {
   constructor() {
-    super('frontend', 'http://localhost:3000');
+    super('frontend');
   }
 
   // Network Device Management
@@ -197,71 +197,25 @@ class Pi5SupernodeAPIClient extends UnifiedApiClient {
       active: mockDevices.filter(d => d.is_active).length
     };
   }
-    
-  }
 
   async getDevice(macAddress: string): Promise<ApiResponse<NetworkDevice>> {
-    try {
-      return await this.get<NetworkDevice>(`/api/v1/network/devices/${macAddress}`);
-    } catch (error) {
-      throw new Error(`Device not found: ${macAddress}`);
-    }
+    return this.get<NetworkDevice>(`/api/v1/network/devices/${macAddress}`);
   }
 
   async createDevice(device: DeviceInput): Promise<ApiResponse<NetworkDevice>> {
-    try {
-      return await this.post<NetworkDevice>('/api/v1/network/devices', device);
-    } catch (error) {
-      console.warn('Create device API failed, simulating success:', error);
-      // Simulate successful creation
-      const newDevice: NetworkDevice = {
-        ...device,
-        is_active: true,
-        last_seen: new Date().toISOString(),
-        first_discovered: new Date().toISOString(),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
-      return {
-        success: true,
-        data: newDevice,
-        timestamp: new Date().toISOString()
-      };
-    }
+    return this.post<NetworkDevice>('/api/v1/network/devices', device);
   }
 
   async updateDevice(macAddress: string, updates: DeviceUpdate): Promise<ApiResponse<NetworkDevice>> {
-    try {
-      return await this.put<NetworkDevice>(`/api/v1/network/devices/${macAddress}`, updates);
-    } catch (error) {
-      console.warn('Update device API failed, simulating success:', error);
-      throw new Error(`Update failed for device: ${macAddress}`);
-    }
+    return this.put<NetworkDevice>(`/api/v1/network/devices/${macAddress}`, updates);
   }
 
   async deleteDevice(macAddress: string): Promise<ApiResponse<void>> {
-    try {
-      return await this.delete(`/api/v1/network/devices/${macAddress}`);
-    } catch (error) {
-      console.warn('Delete device API failed, simulating success:', error);
-      return {
-        success: true,
-        timestamp: new Date().toISOString()
-      };
-    }
+    return this.delete(`/api/v1/network/devices/${macAddress}`);
   }
 
   async wakeDevice(macAddress: string): Promise<ApiResponse<{ message: string }>> {
-    try {
-      return await this.post(`/api/v1/network/devices/${macAddress}/wake`);
-    } catch (error) {
-      console.warn('Wake device API failed, simulating success:', error);
-      return {
-        success: true,
-        data: { message: `Wake-on-LAN packet sent to ${macAddress}` },
-        timestamp: new Date().toISOString()
-      };
-    }
+    return this.post(`/api/v1/network/devices/${macAddress}/wake`);
   }
 
   // System Operations
@@ -273,107 +227,11 @@ class Pi5SupernodeAPIClient extends UnifiedApiClient {
     temperature: number;
     uptime: number;
   }>> {
-    if (!this.isAPIAvailable) {
-      // Return mock system metrics
-      return {
-        success: true,
-        data: {
-          cpu: Math.floor(Math.random() * 50) + 20,
-          memory: Math.floor(Math.random() * 40) + 30,
-          disk: Math.floor(Math.random() * 30) + 50,
-          network: { 
-            upload: Math.floor(Math.random() * 50) + 10,
-            download: Math.floor(Math.random() * 200) + 50
-          },
-          temperature: Math.floor(Math.random() * 20) + 35,
-          uptime: Math.floor(Date.now() / 1000)
-        },
-        timestamp: new Date().toISOString()
-      };
-    }
-
-    try {
-      return await this.get('/api/v1/system/metrics');
-    } catch (error) {
-      console.warn('System metrics API failed, using mock data:', error);
-      return this.getMockSystemMetrics();
-    }
-  }
-
-  private getMockSystemMetrics(): ApiResponse<any> {
-    return {
-      success: true,
-      data: {
-        cpu: Math.floor(Math.random() * 50) + 20,
-        memory: Math.floor(Math.random() * 40) + 30, 
-        disk: Math.floor(Math.random() * 30) + 50,
-        network: {
-          upload: Math.floor(Math.random() * 50) + 10,
-          download: Math.floor(Math.random() * 200) + 50
-        },
-        temperature: Math.floor(Math.random() * 20) + 35,
-        uptime: Math.floor(Date.now() / 1000)
-      },
-      timestamp: new Date().toISOString()
-    };
+    return this.get('/api/v1/system/metrics');
   }
 
   async discoverDevices(): Promise<ApiResponse<{ discovered: number; devices: NetworkDevice[] }>> {
-    if (!this.isAPIAvailable) {
-      // Simulate device discovery
-      return {
-        success: true,
-        data: {
-          discovered: 2,
-          devices: [
-            {
-              mac_address: `00:${Math.floor(Math.random()*256).toString(16).padStart(2, '0')}:${Math.floor(Math.random()*256).toString(16).padStart(2, '0')}:${Math.floor(Math.random()*256).toString(16).padStart(2, '0')}:${Math.floor(Math.random()*256).toString(16).padStart(2, '0')}:${Math.floor(Math.random()*256).toString(16).padStart(2, '0')}`,
-              ip_address: `192.168.1.${Math.floor(Math.random() * 200) + 50}`,
-              device_name: 'Discovered Device',
-              device_type: 'PC',
-              device_brand: 'Unknown',
-              is_active: true,
-              last_seen: new Date().toISOString(),
-              first_discovered: new Date().toISOString(),
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            }
-          ]
-        },
-        timestamp: new Date().toISOString()
-      };
-    }
-
-    try {
-      return await this.post('/api/v1/network/discover');
-    } catch (error) {
-      console.warn('Device discovery API failed, simulating discovery:', error);
-      return this.getMockDiscoveryResponse();
-    }
-  }
-
-  private getMockDiscoveryResponse(): ApiResponse<{ discovered: number; devices: NetworkDevice[] }> {
-    return {
-      success: true,
-      data: {
-        discovered: 1,
-        devices: [
-          {
-            mac_address: `00:${Math.floor(Math.random()*256).toString(16).padStart(2, '0')}:${Math.floor(Math.random()*256).toString(16).padStart(2, '0')}:${Math.floor(Math.random()*256).toString(16).padStart(2, '0')}:${Math.floor(Math.random()*256).toString(16).padStart(2, '0')}:${Math.floor(Math.random()*256).toString(16).padStart(2, '0')}`,
-            ip_address: `192.168.1.${Math.floor(Math.random() * 200) + 50}`,
-            device_name: 'New Device',
-            device_type: 'PC',
-            device_brand: 'Unknown',
-            is_active: true,
-            last_seen: new Date().toISOString(),
-            first_discovered: new Date().toISOString(),
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          }
-        ]
-      },
-      timestamp: new Date().toISOString()
-    };
+    return this.post('/api/v1/network/discover');
   }
 
   // Real-time updates
