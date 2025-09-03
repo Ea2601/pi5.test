@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
-import { useAppStore, navigationItems } from '../../store';
+import { useAppStore } from '../../store';
+import { navigationItems } from '../../config/navigation';
 import { cn } from '../../lib/utils';
 import { useAccessibility } from '../../hooks/ui/useAccessibility';
 

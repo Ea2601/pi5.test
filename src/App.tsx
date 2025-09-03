@@ -1,15 +1,15 @@
 import React, { Suspense } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { HelmetProvider } from 'react-helmet-async';
+import { QueryProvider } from './components/providers/QueryProvider';
+import { HelmetProvider } from './components/providers/HelmetProvider';
 import { Navigation } from './components/layout/Navigation';
 import { SEOMeta } from './components/SEO/SEOMeta';
-import { Card } from './components/ui/Card';
 import { useAppStore } from './store';
 import { moduleManager } from './core/ModuleManager';
 import { moduleRegistry } from './core/ModuleRegistry';
 import { cn } from './lib/utils';
 import { useAccessibility } from './hooks/ui/useAccessibility';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
+import { LoadingSpinner } from './components/loading';
 
 // Lazy load views for better performance
 const Dashboard = React.lazy(() => import('./components/views/Dashboard'));
@@ -28,25 +28,6 @@ const AutomationModule = React.lazy(() => import('./modules/AutomationModule'));
 const StorageModule = React.lazy(() => import('./modules/StorageModule'));
 const MonitoringModule = React.lazy(() => import('./modules/MonitoringModule'));
 const SystemSettingsModule = React.lazy(() => import('./modules/SystemSettingsModule'));
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 30000, // 30 seconds
-      cacheTime: 300000, // 5 minutes
-      refetchOnWindowFocus: false,
-      retry: 3,
-      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000)
-    }
-  }
-});
-
-// Loading component
-const LoadingSpinner: React.FC = () => (
-  <div className="flex items-center justify-center h-96">
-    <div className="w-8 h-8 border-2 border-white/30 border-t-emerald-400 rounded-full animate-spin" />
-  </div>
-);
 
 // Placeholder component for unimplemented views
 const PlaceholderView: React.FC<{ title: string; description: string }> = ({ title, description }) => (
@@ -189,7 +170,7 @@ function App() {
 
   return (
     <HelmetProvider>
-      <QueryClientProvider client={queryClient}>
+      <QueryProvider>
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900">
           {/* SEO Meta Tags */}
           <SEOMeta
@@ -226,7 +207,7 @@ function App() {
             </div>
           </main>
         </div>
-      </QueryClientProvider>
+      </QueryProvider>
     </HelmetProvider>
   );
 }
