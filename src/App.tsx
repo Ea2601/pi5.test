@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
 import { Navigation } from './components/layout/Navigation';
 import { SEOMeta } from './components/SEO/SEOMeta';
+import { Card } from './components/ui/Card';
 import { useAppStore } from './store';
 import { moduleManager } from './core/ModuleManager';
 import { moduleRegistry } from './core/ModuleRegistry';

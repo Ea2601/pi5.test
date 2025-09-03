@@ -49,7 +49,7 @@ class ModuleRegistry {
           category: 'network' as const,
           dependencies: [],
           configSchema: {},
-          entryPoint: 'NetworkModule.tsx',
+          entryPoint: 'NetworkModule',
           tabConfig: {
             label: 'Ağ',
             icon: 'Network',
@@ -68,7 +68,7 @@ class ModuleRegistry {
           category: 'network' as const,
           dependencies: [],
           configSchema: {},
-          entryPoint: 'DeviceModule.tsx',
+          entryPoint: 'DeviceModule',
           tabConfig: {
             label: 'Cihazlar',
             icon: 'Router',
@@ -88,7 +88,7 @@ class ModuleRegistry {
           dependencies: [],
           requiredPorts: [51820],
           configSchema: {},
-          entryPoint: 'VPNModule.tsx',
+          entryPoint: 'VPNModule',
           tabConfig: {
             label: 'VPN',
             icon: 'Shield',
@@ -107,7 +107,7 @@ class ModuleRegistry {
           category: 'automation' as const,
           dependencies: [],
           configSchema: {},
-          entryPoint: 'AutomationModule.tsx',
+          entryPoint: 'AutomationModule',
           tabConfig: {
             label: 'Otomasyon',
             icon: 'Zap',
@@ -145,7 +145,7 @@ class ModuleRegistry {
           category: 'storage' as const,
           dependencies: [],
           configSchema: {},
-          entryPoint: 'StorageModule.tsx',
+          entryPoint: 'StorageModule',
           tabConfig: {
             label: 'Depolama',
             icon: 'HardDrive',
