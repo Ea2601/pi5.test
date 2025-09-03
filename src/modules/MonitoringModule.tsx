@@ -10,9 +10,9 @@ import { BaseModule } from '../core/BaseModule';
 import { communicationBus } from '../core/CommunicationBus';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { MetricCard } from '../cards/MetricCard';
-import { ChartCard } from '../cards/ChartCard';
-import { LogCard } from '../cards/LogCard';
+import { MetricCard } from '../components/cards/MetricCard';
+import { ChartCard } from '../components/cards/ChartCard';
+import { LogCard } from '../components/cards/LogCard';
 import { cn } from '../lib/utils';
 
 class MonitoringModuleClass extends BaseModule {
