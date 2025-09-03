@@ -5,7 +5,7 @@
 help: ## Show this help message
 	@echo "Pi5 Supernode - Development Commands"
 	@echo ""
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$\' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$\' $(MAKEFILE_LIST) | sort | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 # Modular System Commands
 modular-setup: ## Initialize modular architecture with all modules
@@ -110,7 +110,7 @@ schema-generate: ## Generate TypeScript types from database schema
 	npm run schema:generate
 
 db-reset: ## Reset database (DANGER: drops all data)
-	@read -p "Are you sure you want to reset the database? [y/N] \" confirm && [ "$$confirm" = "y" ]
+	@read -p "Are you sure you want to reset the database? [y/N] \" confirm && [ \"$$confirm" = "y" ]
 	docker-compose down postgres
 	docker volume rm pi5-supernode_postgres_data
 	docker-compose up -d postgres
