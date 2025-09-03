@@ -4,7 +4,7 @@ import { HelmetProvider } from './components/providers/HelmetProvider';
 import { Navigation } from './components/layout/Navigation';
 import { SEOMeta } from './components/SEO/SEOMeta';
 import { Card } from './components/ui/Card';
-import { Icons } from './components/ui/Icons';
+import { Icons } from './components/ui';
 import { useAppStore } from './store';
 import { moduleManager } from './core/ModuleManager';
 import { moduleRegistry } from './core/ModuleRegistry';

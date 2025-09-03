@@ -56,7 +56,7 @@ class ModuleRegistry {
             order: 2
           }
         },
-        moduleClass: () => import('../modules/NetworkModule.tsx'),
+        moduleClass: () => import('../modules/NetworkModule'),
         isBuiltIn: true
       },
       {
@@ -75,7 +75,7 @@ class ModuleRegistry {
             order: 1
           }
         },
-        moduleClass: () => import('../modules/DeviceModule.tsx'),
+        moduleClass: () => import('../modules/DeviceModule'),
         isBuiltIn: true
       },
       {
@@ -95,7 +95,7 @@ class ModuleRegistry {
             order: 4
           }
         },
-        moduleClass: () => import('../modules/VPNModule.tsx'),
+        moduleClass: () => import('../modules/VPNModule'),
         isBuiltIn: true
       },
       {
@@ -114,7 +114,7 @@ class ModuleRegistry {
             order: 5
           }
         },
-        moduleClass: () => import('../modules/AutomationModule.tsx'),
+        moduleClass: () => import('../modules/AutomationModule'),
         isBuiltIn: true
       },
       {
@@ -126,14 +126,14 @@ class ModuleRegistry {
           category: 'monitoring' as const,
           dependencies: [],
           configSchema: {},
-          entryPoint: 'MonitoringModule.tsx',
+          entryPoint: 'MonitoringModule',
           tabConfig: {
             label: 'İzleme',
             icon: 'Activity',
             order: 6
           }
         },
-        moduleClass: () => import('../modules/MonitoringModule.tsx'),
+        moduleClass: () => import('../modules/MonitoringModule'),
         isBuiltIn: true
       },
       {
@@ -152,7 +152,7 @@ class ModuleRegistry {
             order: 7
           }
         },
-        moduleClass: () => import('../modules/StorageModule.tsx'),
+        moduleClass: () => import('../modules/StorageModule'),
         isBuiltIn: true
       }
     ];

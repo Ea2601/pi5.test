@@ -3,6 +3,7 @@ export { Button } from './Button';
 export { Card } from './Card';
 export type { 
   BaseComponentProps, 
+export { Icons } from './Icons';
   InteractiveProps, 
   ComponentSize, 
   ComponentVariant, 
