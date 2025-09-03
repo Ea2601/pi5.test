@@ -1,11 +1,31 @@
 # Pi5 Supernode - Unified Development Workflow
-.PHONY: help install dev build test deploy clean docs health
+.PHONY: help install dev build test deploy clean docs health modular-setup production-deploy
 
 # Default target
 help: ## Show this help message
 	@echo "Pi5 Supernode - Development Commands"
 	@echo ""
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$\' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+
+# Modular System Commands
+modular-setup: ## Initialize modular architecture with all modules
+	@echo "Setting up modular Pi5 Supernode system..."
+	node scripts/automated-install.js
+	node scripts/module-installer.js install-all
+	npm run dev:modular
+
+module-list: ## List all available modules
+	node scripts/module-installer.js list
+
+module-install: ## Install specific module (usage: make module-install MODULE=device-management)
+	@if [ -z "$(MODULE)" ]; then echo "Usage: make module-install MODULE=module-name"; exit 1; fi
+	node scripts/module-installer.js install $(MODULE)
+
+module-status: ## Show status of all modules
+	node scripts/module-installer.js status
+
+module-verify: ## Verify all module installations
+	node scripts/module-installer.js verify
 
 # Development
 install: ## Install all dependencies (frontend + backend)
@@ -29,8 +49,30 @@ dev-frontend: ## Start only frontend development server
 dev-backend: ## Start only backend services
 	npm run dev:backend
 
+dev-modular: ## Start modular development environment
+	npm run dev:modular
+
 dev-docker: ## Start using Docker Compose
 	docker-compose up -d
+
+# Production Deployment
+production-deploy: ## Deploy to production with all optimizations
+	@echo "Starting production deployment..."
+	sudo bash scripts/production-deploy.sh
+
+production-check: ## Check production deployment health
+	@echo "Checking production health..."
+	curl -f https://localhost/health || echo "Production deployment not accessible"
+	docker-compose -f docker-compose.prod.yml ps
+
+production-logs: ## View production logs
+	docker-compose -f docker-compose.prod.yml logs -f
+
+production-backup: ## Create production backup
+	@echo "Creating production backup..."
+	mkdir -p backups
+	docker-compose -f docker-compose.prod.yml exec postgres pg_dump -U postgres pi5_supernode > backups/prod-backup-$(shell date +%Y%m%d_%H%M%S).sql
+	tar czf backups/config-backup-$(shell date +%Y%m%d_%H%M%S).tar.gz .env.production docker-compose.prod.yml
 
 # Building and Testing
 build: ## Build all components

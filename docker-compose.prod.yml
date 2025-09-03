@@ -1,0 +1,306 @@
+version: '3.8'
+
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+x-restart-policy: &restart-policy
+  restart: unless-stopped
+
+x-healthcheck-defaults: &healthcheck-defaults
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 40s
+
+services:
+  # Production PostgreSQL with optimization
+  postgres:
+    image: postgres:15-alpine
+    container_name: pi5-postgres-prod
+    environment:
+      POSTGRES_DB: pi5_supernode
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # Production optimizations
+      POSTGRES_SHARED_BUFFERS: 512MB
+      POSTGRES_EFFECTIVE_CACHE_SIZE: 2GB
+      POSTGRES_WORK_MEM: 8MB
+      POSTGRES_MAINTENANCE_WORK_MEM: 128MB
+      POSTGRES_WAL_BUFFERS: 32MB
+      POSTGRES_CHECKPOINT_COMPLETION_TARGET: 0.9
+      POSTGRES_RANDOM_PAGE_COST: 1.1
+      POSTGRES_MAX_CONNECTIONS: 200
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+      - ./production/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - pi5-prod-network
+    logging: *default-logging
+    <<: *restart-policy
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d pi5_supernode"]
+      <<: *healthcheck-defaults
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+
+  # Production Redis with clustering support
+  redis:
+    image: redis:7-alpine
+    container_name: pi5-redis-prod
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - redis_prod_data:/data
+      - ./production/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    ports:
+      - "6379:6379"
+    networks:
+      - pi5-prod-network
+    logging: *default-logging
+    <<: *restart-policy
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      <<: *healthcheck-defaults
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # Production API Gateway with clustering
+  api-gateway:
+    build:
+      context: ./backend/api-gateway
+      dockerfile: Dockerfile.prod
+    container_name: pi5-api-gateway-prod
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/pi5_supernode
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET}
+      NODE_ENV: production
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      # Production settings
+      NODE_OPTIONS: "--max-old-space-size=1024"
+      UV_THREADPOOL_SIZE: 32
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - pi5-prod-network
+    logging: *default-logging
+    <<: *restart-policy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/health || exit 1"]
+      <<: *healthcheck-defaults
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1G
+        reservations:
+          cpus: '1.0'
+          memory: 512M
+      replicas: 2
+
+  # Production Frontend with Nginx
+  frontend:
+    build:
+      context: ./
+      dockerfile: Dockerfile.frontend.prod
+    container_name: pi5-frontend-prod
+    volumes:
+      - ./production/nginx/frontend.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - pi5-prod-network
+    logging: *default-logging
+    <<: *restart-policy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
+      <<: *healthcheck-defaults
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+
+  # Production Nginx with SSL termination
+  nginx:
+    image: nginx:alpine
+    container_name: pi5-nginx-prod
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./production/nginx/nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - ./production/nginx/ssl:/etc/nginx/ssl:ro
+      - nginx_prod_cache:/var/cache/nginx
+      - nginx_prod_logs:/var/log/nginx
+    depends_on:
+      - api-gateway
+      - frontend
+    networks:
+      - pi5-prod-network
+    logging: *default-logging
+    <<: *restart-policy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost/health || exit 1"]
+      <<: *healthcheck-defaults
+
+  # Production Monitoring Stack
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: pi5-prometheus-prod
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=90d'
+      - '--storage.tsdb.retention.size=10GB'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+    volumes:
+      - ./production/monitoring/prometheus.prod.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_prod_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - pi5-prod-network
+    logging: *default-logging
+    <<: *restart-policy
+    healthcheck:
+      test: ["CMD-SHELL", "promtool query instant 'up' || exit 1"]
+      <<: *healthcheck-defaults
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: pi5-grafana-prod
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: false
+      GF_ANALYTICS_REPORTING_ENABLED: false
+      GF_ANALYTICS_CHECK_FOR_UPDATES: false
+      GF_LOG_LEVEL: warn
+      GF_PATHS_PROVISIONING: /etc/grafana/provisioning
+      GF_SECURITY_DISABLE_GRAVATAR: true
+      GF_SECURITY_DISABLE_BRUTE_FORCE_LOGIN_PROTECTION: false
+      GF_SERVER_DOMAIN: ${DOMAIN_NAME:-localhost}
+      GF_SERVER_ROOT_URL: https://${DOMAIN_NAME:-localhost}/grafana/
+    volumes:
+      - grafana_prod_data:/var/lib/grafana
+      - ./production/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    ports:
+      - "3100:3000"
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    networks:
+      - pi5-prod-network
+    logging: *default-logging
+    <<: *restart-policy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      <<: *healthcheck-defaults
+
+  # Node Exporter for system metrics
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: pi5-node-exporter-prod
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+      - '--web.listen-address=0.0.0.0:9100'
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    ports:
+      - "9100:9100"
+    networks:
+      - pi5-prod-network
+    logging: *default-logging
+    <<: *restart-policy
+    pid: host
+
+  # Log aggregation with Loki
+  loki:
+    image: grafana/loki:latest
+    container_name: pi5-loki-prod
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./production/logging/loki-config.yml:/etc/loki/local-config.yaml:ro
+      - loki_prod_data:/loki
+    ports:
+      - "3102:3100"
+    networks:
+      - pi5-prod-network
+    logging: *default-logging
+    <<: *restart-policy
+
+  # Backup service
+  backup-service:
+    image: postgres:15-alpine
+    container_name: pi5-backup-service
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      BACKUP_SCHEDULE: "0 2 * * *"  # Daily at 2 AM
+      BACKUP_RETENTION_DAYS: 30
+    volumes:
+      - ./production/backup:/backup
+      - ./scripts/backup.sh:/backup.sh:ro
+    command: |
+      sh -c "
+        echo '${BACKUP_SCHEDULE:-0 2 * * *} /backup.sh' > /var/spool/cron/crontabs/root
+        crond -f
+      "
+    depends_on:
+      - postgres
+    networks:
+      - pi5-prod-network
+    logging: *default-logging
+    <<: *restart-policy
+
+volumes:
+  postgres_prod_data:
+    driver: local
+  redis_prod_data:
+    driver: local
+  prometheus_prod_data:
+    driver: local
+  grafana_prod_data:
+    driver: local
+  loki_prod_data:
+    driver: local
+  nginx_prod_cache:
+    driver: local
+  nginx_prod_logs:
+    driver: local
+
+networks:
+  pi5-prod-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.22.0.0/16
+          gateway: 172.22.0.1</parameter>
