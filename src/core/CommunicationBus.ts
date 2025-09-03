@@ -3,7 +3,7 @@
  * Standardized communication protocol for module interactions
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'eventemitter3';
 import { UnifiedLogger } from '../../shared/utils/logger';
 
 export interface MessageEnvelope {

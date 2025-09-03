@@ -3,7 +3,7 @@
  * Handles module lifecycle, communication, and standardized interfaces
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'eventemitter3';
 import { UnifiedLogger } from '../../shared/utils/logger';
 
 export interface ModuleManifest {
