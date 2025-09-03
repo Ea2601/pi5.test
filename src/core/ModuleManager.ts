@@ -71,8 +71,8 @@ class ModuleManager extends EventEmitter {
     try {
       this.logger.info(`Loading module: ${moduleId}`);
       
-      // Create module instance from data
-      const module = await this.createModuleInstance(moduleData);
+      // Use module data directly
+      const module = moduleData;
       
       // Validate dependencies
       await this.validateDependencies(module.manifest);

@@ -3,6 +3,8 @@ import { QueryProvider } from './components/providers/QueryProvider';
 import { HelmetProvider } from './components/providers/HelmetProvider';
 import { Navigation } from './components/layout/Navigation';
 import { SEOMeta } from './components/SEO/SEOMeta';
+import { Card } from './components/ui/Card';
+import { Icons } from './components/ui/Icons';
 import { useAppStore } from './store';
 import { moduleManager } from './core/ModuleManager';
 import { moduleRegistry } from './core/ModuleRegistry';
@@ -49,7 +51,6 @@ function App() {
     const initializeModularSystem = async () => {
       try {
         await moduleRegistry.initialize();
-        await moduleManager.initializeCoreModules();
         
         // Make module manager globally available
         (window as any).moduleManager = moduleManager;
