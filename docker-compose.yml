@@ -65,6 +65,7 @@ services:
       - pi5-network
     restart: unless-stopped
     volumes:
+      - ./backend/api-gateway:/app
 
   # Network Management Service
   network-service:
