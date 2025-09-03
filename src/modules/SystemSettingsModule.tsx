@@ -10,8 +10,8 @@ import { BaseModule } from '../core/BaseModule';
 import { communicationBus } from '../core/CommunicationBus';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { MetricCard } from '../cards/MetricCard';
-import { ControlCard } from '../cards/ControlCard';
+import { MetricCard } from '../components/cards/MetricCard';
+import { ControlCard } from '../components/cards/ControlCard';
 import { cn } from '../lib/utils';
 
 class SystemSettingsModuleClass extends BaseModule {
