@@ -199,7 +199,11 @@ class Pi5SupernodeAPIClient extends UnifiedApiClient {
   }
 
   async getDevice(macAddress: string): Promise<ApiResponse<NetworkDevice>> {
-    return this.get<NetworkDevice>(`/api/v1/network/devices/${macAddress}`);
+    try {
+      return await this.get<NetworkDevice>(`/api/v1/network/devices/${macAddress}`);
+    } catch (error) {
+      throw new Error(`Device not found: ${macAddress}`);
+    }
   }
 
   async createDevice(device: DeviceInput): Promise<ApiResponse<NetworkDevice>> {
