@@ -56,7 +56,7 @@ class ModuleRegistry {
             order: 2
           }
         },
-        moduleClass: () => import('../modules/NetworkModule'),
+        moduleClass: () => import('../modules/NetworkModule.tsx'),
         isBuiltIn: true
       },
       {
@@ -75,7 +75,7 @@ class ModuleRegistry {
             order: 1
           }
         },
-        moduleClass: () => import('../modules/DeviceModule'),
+        moduleClass: () => import('../modules/DeviceModule.tsx'),
         isBuiltIn: true
       },
       {
@@ -95,7 +95,7 @@ class ModuleRegistry {
             order: 4
           }
         },
-        moduleClass: () => import('../modules/VPNModule'),
+        moduleClass: () => import('../modules/VPNModule.tsx'),
         isBuiltIn: true
       },
       {
@@ -114,7 +114,7 @@ class ModuleRegistry {
             order: 5
           }
         },
-        moduleClass: () => import('../modules/AutomationModule'),
+        moduleClass: () => import('../modules/AutomationModule.tsx'),
         isBuiltIn: true
       },
       {
@@ -133,7 +133,7 @@ class ModuleRegistry {
             order: 6
           }
         },
-        moduleClass: () => import('../modules/MonitoringModule'),
+        moduleClass: () => import('../modules/MonitoringModule.tsx'),
         isBuiltIn: true
       },
       {
@@ -152,7 +152,7 @@ class ModuleRegistry {
             order: 7
           }
         },
-        moduleClass: () => import('../modules/StorageModule'),
+        moduleClass: () => import('../modules/StorageModule.tsx'),
         isBuiltIn: true
       }
     ];
