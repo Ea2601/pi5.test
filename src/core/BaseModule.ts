@@ -147,5 +147,3 @@ export abstract class BaseModule implements ModuleInterface {
     }
   }
 }
-
-export { BaseModule };
