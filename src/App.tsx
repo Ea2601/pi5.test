@@ -1,9 +1,11 @@
 import React, { Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
-import { Navigation } from './components/layout/Navigation';
+import { ModularNavigation } from './components/layout/ModularNavigation';
+import { ModularDashboard } from './components/layout/ModularDashboard';
 import { SEOMeta } from './components/SEO/SEOMeta';
 import { useAppStore } from './store';
+import { moduleRegistry } from './core/ModuleRegistry';
 import { cn } from './lib/utils';
 import { useAccessibility } from './hooks/ui/useAccessibility';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
@@ -51,47 +53,40 @@ function App() {
   const { currentView, isMenuCollapsed } = useAppStore();
   const { isReducedMotion } = useAccessibility();
 
+  // Initialize module system
+  React.useEffect(() => {
+    moduleRegistry.initialize().catch(error => {
+      console.error('Failed to initialize module registry:', error);
+    });
+  }, []);
+
   const renderView = () => {
     switch (currentView) {
       case 'dashboard':
         return (
-          <Dashboard />
+          <ModularDashboard />
         );
       case 'devices':
-        return (
-          <Devices />
-        );
+        return <ModularModuleRenderer moduleId="device-management" />;
       case 'network':
-        return (
-          <Network />
-        );
+        return <ModularModuleRenderer moduleId="network-management" />;
       case 'vpn':
-        return (
-          <VPN />
-        );
+        return <ModularModuleRenderer moduleId="vpn-management" />;
       case 'automations':
-        return (
-          <Automations />
-        );
+        return <ModularModuleRenderer moduleId="automation-engine" />;
       case 'observability':
-        return (
-          <Observability />
-        );
+        return <ModularModuleRenderer moduleId="monitoring-dashboard" />;
       case 'storage':
-        return (
-          <Storage />
-        );
+        return <ModularModuleRenderer moduleId="storage-management" />;
       case 'nvr':
         return <PlaceholderView title="Ağ Video Kaydedici" description="Frigate video yönetimi ve güvenlik kameraları" />;
       case 'ai':
         return <PlaceholderView title="Yapay Zeka Asistanı" description="Akıllı ağ yardımı ve otomasyon" />;
       case 'settings':
-        return (
-          <Settings />
-        );
+        return <ModularModuleRenderer moduleId="system-settings" fallback={<Settings />} />;
       default:
         return (
-          <Dashboard />
+          <ModularDashboard />
         );
     }
   };
@@ -152,7 +147,7 @@ function App() {
           </div>
 
           {/* Navigation */}
-          <Navigation />
+          <ModularNavigation />
 
           {/* Main Content */}
           <main 
@@ -179,4 +174,52 @@ function App() {
   );
 }
 
+// Modular Module Renderer Component
+const ModularModuleRenderer: React.FC<{ 
+  moduleId: string; 
+  fallback?: React.ComponentType<any> 
+}> = ({ moduleId, fallback: Fallback }) => {
+  const [moduleComponent, setModuleComponent] = React.useState<React.ComponentType<any> | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const loadModule = async () => {
+      try {
+        const module = moduleRegistry.moduleManager?.getModule(moduleId);
+        if (module) {
+          const Component = module.getComponent();
+          setModuleComponent(() => Component);
+        } else if (Fallback) {
+          setModuleComponent(() => Fallback);
+        } else {
+          setError(`Module not found: ${moduleId}`);
+        }
+      } catch (error) {
+        setError((error as Error).message);
+        if (Fallback) {
+    loadModule();
+  }, [moduleId, Fallback]);
+          setModuleComponent(() => Fallback);
+  if (error && !Fallback) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <Card>
+          <div className="text-center p-6">
+            <Icons.AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+            <h3 className="text-white font-semibold mb-2">Modül Yüklenemedi</h3>
+            <p className="text-white/70 text-sm">{error}</p>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+        }
+  if (!moduleComponent) {
+    return <LoadingSpinner />;
+  }
+      }
+  const Component = moduleComponent;
+  return <Component />;
+};
+    };
 export default App;

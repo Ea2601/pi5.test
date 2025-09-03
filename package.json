@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:full": "concurrently \"npm run dev:backend\" \"npm run dev\"",
+    "dev:modular": "concurrently \"npm run dev:backend\" \"npm run dev\"",
+    "install:automated": "node scripts/automated-install.js",
     "build": "vite build",
     "preview": "vite preview",
     "type-check": "tsc --noEmit",
@@ -21,6 +22,7 @@
     "dev:backend": "cd backend && npm run dev",
     "dev:all": "concurrently \"npm run dev\" \"npm run dev:backend\"",
     "dev:clean": "npm run clean && npm install && npm run dev",
+    "setup:pi5": "npm run install:automated && npm run dev:modular",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs -f",
