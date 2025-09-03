@@ -248,7 +248,7 @@ export const AutoInstallWizard: React.FC<{ onComplete: () => void }> = ({ onComp
                     ...prev,
                     networkConfig: { ...prev.networkConfig, hostname: e.target.value }
                   }))}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none"
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
                   placeholder="pi5-supernode"
                 />
               </div>
@@ -261,7 +261,7 @@ export const AutoInstallWizard: React.FC<{ onComplete: () => void }> = ({ onComp
                     ...prev,
                     networkConfig: { ...prev.networkConfig, staticIP: e.target.value }
                   }))}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none"
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
                   placeholder="192.168.1.100"
                 />
               </div>
@@ -484,4 +484,4 @@ export const AutoInstallWizard: React.FC<{ onComplete: () => void }> = ({ onComp
       )}
     </div>
   );
-};</parameter>
+};

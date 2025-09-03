@@ -427,4 +427,4 @@ class PerformanceOptimizer {
   }
 }
 
-export const performanceOptimizer = PerformanceOptimizer.getInstance();</parameter>
+export const performanceOptimizer = PerformanceOptimizer.getInstance();

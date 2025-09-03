@@ -516,4 +516,4 @@ export const ModuleManagerComponent: React.FC = () => {
       )}
     </div>
   );
-};</parameter>
+};

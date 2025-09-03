@@ -124,7 +124,7 @@ class DataSyncManager extends EventEmitter {
     };
 
     this.syncQueue.push(syncEvent);
-    this.processsyncQueue();
+    this.processSyncQueue();
 
     this.logger.debug('Shared data updated', { namespace, key, source: sourceModule });
   }
@@ -261,7 +261,7 @@ class DataSyncManager extends EventEmitter {
 
     // Queue all sync events
     this.syncQueue.push(...validatedUpdates);
-    this.processyncQueue();
+    this.processSyncQueue();
   }
 
   // Real-time data synchronization
@@ -379,4 +379,4 @@ class DataSyncManager extends EventEmitter {
   }
 }
 
-export const dataSyncManager = DataSyncManager.getInstance();</parameter>
+export const dataSyncManager = DataSyncManager.getInstance();
