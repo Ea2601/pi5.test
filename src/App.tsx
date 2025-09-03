@@ -197,9 +197,13 @@ const ModularModuleRenderer: React.FC<{
       } catch (error) {
         setError((error as Error).message);
         if (Fallback) {
+          setModuleComponent(() => Fallback);
+        }
+      }
+    };
     loadModule();
   }, [moduleId, Fallback]);
-          setModuleComponent(() => Fallback);
+
   if (error && !Fallback) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -213,13 +217,13 @@ const ModularModuleRenderer: React.FC<{
       </div>
     );
   }
-        }
+
   if (!moduleComponent) {
     return <LoadingSpinner />;
   }
-      }
+
   const Component = moduleComponent;
   return <Component />;
 };
-    };
+
 export default App;
